@@ -1,0 +1,956 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>StudyBalance - Motor de Calendarización Inteligente</title>
+<style>
+  * { box-sizing: border-box; }
+  body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: #f4f6fb;
+    color: #1e293b;
+    margin: 0;
+    padding: 0;
+  }
+  header {
+    background: linear-gradient(135deg, #4338ca, #6366f1);
+    color: white;
+    padding: 1.2rem 2rem;
+  }
+  header h1 { margin: 0; font-size: 1.5rem; }
+  header p { margin: 0.3rem 0 0; font-size: 0.85rem; opacity: 0.9; }
+  main { max-width: 1000px; margin: 0 auto; padding: 1.5rem; }
+  .card {
+    background: white;
+    border-radius: 14px;
+    padding: 1.5rem;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+    margin-bottom: 1.5rem;
+    border: 1px solid #e2e8f0;
+  }
+  .card h2 { margin-top: 0; font-size: 1.1rem; color: #312e81; }
+  .ramo-row { display: flex; gap: 0.6rem; margin-bottom: 0.6rem; align-items: center; }
+  .ramo-row input, .ramo-row select {
+    padding: 0.5rem; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 0.9rem;
+  }
+  .ramo-row input { flex: 1; }
+  .ramo-row button.remove { background: none; border: none; cursor: pointer; color: #ef4444; font-size: 1rem; }
+  .btn {
+    background: #4f46e5; color: white; border: none; padding: 0.7rem 1.2rem;
+    border-radius: 10px; font-size: 0.95rem; cursor: pointer; font-weight: 600;
+  }
+  .btn:hover { background: #4338ca; }
+  .btn-secondary { background: #e2e8f0; color: #334155; }
+  .btn-secondary:hover { background: #cbd5e1; }
+  .ocupacion-row { display: grid; grid-template-columns: 1fr 90px 90px 1fr auto; gap: 0.5rem; margin-bottom: 0.5rem; align-items: center; }
+  .ocupacion-row select, .ocupacion-row input { padding: 0.45rem; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 0.85rem; }
+  .tabs { display: flex; gap: 0.5rem; border-bottom: 2px solid #e2e8f0; margin-bottom: 1rem; }
+  .tab-btn {
+    background: none; border: none; padding: 0.6rem 1rem; cursor: pointer;
+    font-size: 0.9rem; color: #64748b; border-bottom: 3px solid transparent; font-weight: 600;
+  }
+  .tab-btn.active { color: #4338ca; border-bottom-color: #4338ca; }
+  table { width: 100%; border-collapse: collapse; font-size: 0.85rem; }
+  th { background: #f1f5f9; text-align: left; padding: 0.6rem; color: #475569; font-size: 0.75rem; text-transform: uppercase; }
+  td { padding: 0.55rem 0.6rem; border-bottom: 1px solid #f1f5f9; }
+  tr.estudio td:nth-child(2) { font-weight: 600; color: #312e81; }
+  tr.pausa td { color: #059669; background: #f0fdf4; font-size: 0.8rem; }
+  tr.autocuidado td { color: #b45309; background: #fffbeb; font-size: 0.8rem; }
+  .dia-titulo { font-weight: 700; margin: 1rem 0 0.4rem; color: #1e293b; font-size: 0.95rem; }
+  .resumen-pill {
+    display: inline-block; background: #eef2ff; color: #4338ca; padding: 0.3rem 0.7rem;
+    border-radius: 20px; font-size: 0.8rem; font-weight: 600; margin-bottom: 0.6rem;
+  }
+  .descripcion { color: #64748b; font-size: 0.85rem; margin-bottom: 1rem; }
+  .error-box { background: #fef2f2; color: #b91c1c; border: 1px solid #fecaca; padding: 0.8rem; border-radius: 10px; font-size: 0.85rem; }
+  .hidden { display: none; }
+  .pendiente-warning { color: #b45309; font-size: 0.8rem; margin-top: 0.5rem; }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>🌱 StudyBalance — Motor de Calendarización</h1>
+  <p>Proyecto TDFI101 · Grupo 2 · UNAB Sede Antonio Varas · ODS 3: Salud y Bienestar</p>
+</header>
+
+<main>
+
+  <div class="card">
+    <h2>1. Horario fijo (clases y hábitos)</h2>
+    <p class="descripcion">Agrega cada clase u hábito fijo de tu semana. El motor calculará automáticamente los huecos libres.</p>
+    <div id="ocupaciones-container"></div>
+    <button class="btn btn-secondary" onclick="agregarOcupacion()" type="button">+ Agregar bloque</button>
+  </div>
+
+  <div class="card">
+    <h2>2. Asignaturas y dificultad percibida</h2>
+    <p class="descripcion">Escala 1 (muy fácil) a 5 (muy difícil).</p>
+    <div id="ramos-container"></div>
+    <button class="btn btn-secondary" onclick="agregarRamo()" type="button">+ Agregar asignatura</button>
+  </div>
+
+  <div class="card">
+    <button class="btn" onclick="ejecutarMotor()" type="button" style="width:100%;">✨ Generar las 3 rutinas de estudio</button>
+  </div>
+
+  <div id="error-container"></div>
+
+  <div id="resultados" class="hidden">
+    <div class="tabs" id="tabs-container"></div>
+    <div id="contenido-opciones"></div>
+  </div>
+
+</main>
+
+<script>
+/**
+ * ============================================================================
+ * StudyBalance — Motor de Calendarización Inteligente
+ * ----------------------------------------------------------------------------
+ * Proyecto TDFI101 · Grupo 2 · UNAB Sede Antonio Varas
+ * Alineado al ODS 3 (Salud y Bienestar) — mitigación de sobrecarga académica.
+ *
+ * Este módulo NO depende de ningún framework. Es JS puro ES6+, pensado para
+ * ser importado tanto en un <script type="module"> del prototipo HTML como
+ * en un backend Node si más adelante se separa cliente/servidor.
+ *
+ * Responsabilidad del módulo:
+ *   1. Tomar el horario fijo (clases + hábitos) y el listado de asignaturas
+ *      con su dificultad percibida (1-5).
+ *   2. Encontrar los bloques de tiempo libres reales de la semana.
+ *   3. Repartir esos bloques libres en sesiones de estudio que respeten
+ *      las reglas de neurociencia (máx. 90 min continuos, pausa de 15 min,
+ *      preferencia horaria para ramos difíciles, reserva de autocuidado).
+ *   4. Generar 3 estrategias distintas sobre la misma base de datos:
+ *        - Enfoque Intensivo por Bloques
+ *        - Distribución Fragmentada (Pomodoro)
+ *        - Balance Equilibrado de Fin de Semana
+ *   5. Devolver todo en una estructura de datos plana y serializable,
+ *      lista para pintar en tablas, calendarios o exportar a JSON/PDF.
+ * ============================================================================
+ */
+
+// ----------------------------------------------------------------------------
+// 1. CONSTANTES Y CONFIGURACIÓN DEL DOMINIO
+// ----------------------------------------------------------------------------
+
+const DIAS_SEMANA = ['Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado', 'Domingo'];
+
+// Reglas "duras" derivadas de neurociencia / psicología del aprendizaje,
+// citadas en la sección 4.1 del informe del Grupo 2.
+const REGLAS_NEUROCIENCIA = {
+  DURACION_MAX_SESION_CONTINUA: 90,   // minutos, sin pausa
+  PAUSA_ACTIVA_OBLIGATORIA: 15,       // minutos
+  DURACION_BLOQUE_POMODORO: 25,       // minutos
+  PAUSA_POMODORO: 5,                  // minutos
+  PAUSA_LARGA_CADA_N_POMODOROS: 4,    // cada 4 pomodoros, pausa larga
+  PAUSA_LARGA_DURACION: 20,           // minutos
+  HORA_INICIO_VENTANA_OPTIMA: 8 * 60, // 08:00 en minutos desde 00:00
+  HORA_FIN_VENTANA_OPTIMA: 13 * 60,   // 13:00 — ventana matutina "óptima"
+  HORA_INICIO_VENTANA_TARDE: 15 * 60, // 15:00 — ventana tarde temprana
+  HORA_FIN_VENTANA_TARDE: 19 * 60,    // 19:00
+  HORA_LIMITE_NOCTURNA: 22 * 60,      // 22:00 — evitar estudio de ramos difíciles después de esto
+  MIN_BLOQUE_AUTOCUIDADO_DIARIO: 30,  // minutos mínimos reservados para autocuidado/descanso
+
+  // Tope saludable de estudio. Esto es deliberado: el motor NO debe llenar
+  // todo el tiempo libre detectado con estudio, porque eso reproduciría
+  // exactamente el problema de sobrecarga académica que el proyecto busca
+  // mitigar (ver Ishikawa: "alta carga académica" como causa raíz).
+  MAX_MINUTOS_ESTUDIO_POR_DIA: 240,   // 4 horas/día como techo razonable
+  MAX_MINUTOS_ESTUDIO_POR_SEMANA: 1200, // 20 horas/semana como techo razonable
+};
+
+// ----------------------------------------------------------------------------
+// 2. UTILIDADES DE TIEMPO
+// ----------------------------------------------------------------------------
+// Todo el motor trabaja internamente en "minutos desde las 00:00" para evitar
+// errores de aritmética con strings de hora. Solo se convierte a "HH:MM"
+// al momento de generar la salida visualizable.
+
+/** Convierte "HH:MM" a minutos desde medianoche. */
+function horaAMinutos(hhmm) {
+  const [h, m] = hhmm.split(':').map(Number);
+  return h * 60 + m;
+}
+
+/** Convierte minutos desde medianoche a "HH:MM". */
+function minutosAHora(mins) {
+  const m = ((mins % 1440) + 1440) % 1440; // normaliza por si cruza medianoche
+  const h = Math.floor(m / 60).toString().padStart(2, '0');
+  const min = (m % 60).toString().padStart(2, '0');
+  return `${h}:${min}`;
+}
+
+/** Determina si un bloque [inicio,fin) cae completamente dentro de una ventana horaria preferente. */
+function dentroDeVentana(inicio, fin, ventanaInicio, ventanaFin) {
+  return inicio >= ventanaInicio && fin <= ventanaFin;
+}
+
+// ----------------------------------------------------------------------------
+// 3. MODELOS DE ENTRADA ESPERADOS (forma del JSON que recibe el motor)
+// ----------------------------------------------------------------------------
+/**
+ * inputData = {
+ *   ocupaciones: [
+ *     { dia: 'Lunes', inicio: '08:00', fin: '10:00', tipo: 'clase', etiqueta: 'Cálculo I' },
+ *     { dia: 'Lunes', inicio: '23:00', fin: '07:00', tipo: 'sueño', etiqueta: 'Dormir' },
+ *     ...
+ *   ],
+ *   asignaturas: [
+ *     { id: 'mat101', nombre: 'Cálculo I', dificultad: 5 },
+ *     { id: 'fis101', nombre: 'Física I', dificultad: 4 },
+ *     { id: 'prog101', nombre: 'Programación', dificultad: 2 },
+ *   ],
+ *   disponibilidad: [
+ *     // Bloques libres declarados por el usuario (si ya los conoce),
+ *     // o se pueden omitir y dejar que el motor los infiera con
+ *     // calcularBloquesLibres() a partir de "ocupaciones".
+ *     { dia: 'Lunes', inicio: '15:00', fin: '19:00' },
+ *     ...
+ *   ],
+ *   horaInicioDia: '07:00',   // opcional, default 07:00
+ *   horaFinDia: '23:00'       // opcional, default 23:00
+ * }
+ */
+
+// ----------------------------------------------------------------------------
+// 4. CÁLCULO DE BLOQUES LIBRES
+// ----------------------------------------------------------------------------
+
+/**
+ * Dado el horario de ocupaciones (clases + hábitos fijos) de un día,
+ * retorna los huecos libres dentro de la ventana [horaInicioDia, horaFinDia].
+ */
+function calcularBloquesLibresDelDia(ocupacionesDelDia, horaInicioDia, horaFinDia) {
+  // Normalizamos a minutos y ordenamos por inicio.
+  const ocupados = ocupacionesDelDia
+    .map(o => ({ inicio: horaAMinutos(o.inicio), fin: horaAMinutos(o.fin) }))
+    .filter(o => o.fin > o.inicio) // descarta bloques mal formados o que cruzan medianoche (se asume normalizado fuera)
+    .sort((a, b) => a.inicio - b.inicio);
+
+  const libres = [];
+  let cursor = horaInicioDia;
+
+  for (const bloque of ocupados) {
+    if (bloque.inicio > cursor) {
+      libres.push({ inicio: cursor, fin: Math.min(bloque.inicio, horaFinDia) });
+    }
+    cursor = Math.max(cursor, bloque.fin);
+    if (cursor >= horaFinDia) break;
+  }
+
+  if (cursor < horaFinDia) {
+    libres.push({ inicio: cursor, fin: horaFinDia });
+  }
+
+  // Filtramos huecos triviales (< 10 min, no sirven para nada productivo).
+  return libres.filter(b => b.fin - b.inicio >= 10);
+}
+
+/**
+ * Calcula los bloques libres de toda la semana a partir del arreglo de
+ * "ocupaciones" (clases + hábitos fijos declarados por el usuario en el
+ * paso 5-6 del storytelling del prototipo: sueño, siesta, salidas, etc).
+ */
+function calcularBloquesLibres(ocupaciones, horaInicioDia = '07:00', horaFinDia = '23:00') {
+  const inicioMin = horaAMinutos(horaInicioDia);
+  const finMin = horaAMinutos(horaFinDia);
+
+  const mapaPorDia = new Map(DIAS_SEMANA.map(d => [d, []]));
+  ocupaciones.forEach(o => {
+    if (mapaPorDia.has(o.dia)) mapaPorDia.get(o.dia).push(o);
+  });
+
+  const resultado = {};
+  for (const dia of DIAS_SEMANA) {
+    resultado[dia] = calcularBloquesLibresDelDia(mapaPorDia.get(dia), inicioMin, finMin);
+  }
+  return resultado; // { Lunes: [{inicio, fin}, ...], Martes: [...], ... }
+}
+
+// ----------------------------------------------------------------------------
+// 5. PRIORIZACIÓN DE ASIGNATURAS
+// ----------------------------------------------------------------------------
+
+/**
+ * Calcula minutos semanales objetivo por asignatura, distribuyendo el tiempo
+ * total disponible de forma proporcional a la dificultad (peso), pero
+ * garantizando un mínimo razonable a cada ramo para que ninguno quede en cero.
+ *
+ * pesoFn permite variar la estrategia: por defecto el peso es la dificultad,
+ * pero la Opción 2 (Distribución Equitativa) puede pasar un peso plano.
+ */
+function calcularMinutosObjetivoPorAsignatura(asignaturas, minutosTotalesDisponibles, { pesoFn = (a) => a.dificultad, minimoPorRamo = 60 } = {}) {
+  // Importante: NO se reparte "todo el tiempo libre detectado" entre las
+  // asignaturas. Se acota primero al techo semanal saludable definido en
+  // REGLAS_NEUROCIENCIA, para no convertir cada hueco libre en estudio
+  // obligatorio (eso sería replicar la sobrecarga académica, no mitigarla).
+  const minutosAReparte = Math.min(minutosTotalesDisponibles, REGLAS_NEUROCIENCIA.MAX_MINUTOS_ESTUDIO_POR_SEMANA);
+
+  const pesos = asignaturas.map(a => Math.max(pesoFn(a), 0.1));
+  const sumaPesos = pesos.reduce((acc, p) => acc + p, 0);
+
+  // Primera pasada: reparto proporcional puro.
+  let objetivo = asignaturas.map((a, i) => ({
+    ...a,
+    minutosObjetivo: Math.round((pesos[i] / sumaPesos) * minutosAReparte),
+  }));
+
+  // Segunda pasada: asegurar mínimo por ramo, redistribuyendo desde los que
+  // recibieron de más (evita que un ramo fácil quede con 0 minutos).
+  const totalAsignado = objetivo.reduce((acc, o) => acc + o.minutosObjetivo, 0);
+
+  if (totalAsignado < asignaturas.length * minimoPorRamo && minutosAReparte >= asignaturas.length * minimoPorRamo) {
+    objetivo = objetivo.map(o => ({ ...o, minutosObjetivo: Math.max(o.minutosObjetivo, minimoPorRamo) }));
+  }
+
+  return objetivo.sort((a, b) => b.dificultad - a.dificultad);
+}
+
+// ----------------------------------------------------------------------------
+// 6. SEGMENTACIÓN DE UN BLOQUE LIBRE EN SESIONES DE ESTUDIO + PAUSAS
+// ----------------------------------------------------------------------------
+
+/**
+ * Dado un bloque libre continuo, lo corta en sub-sesiones de estudio de
+ * máximo `duracionSesion` minutos, insertando pausas de `duracionPausa`
+ * minutos entre cada una. Devuelve una lista de eventos (estudio o pausa).
+ *
+ * Esto es lo que materializa la regla:
+ *   "Las sesiones de estudio continuas por ramo no deben superar los 90
+ *    minutos sin una pausa activa de 15 minutos."
+ * y también sirve para el esquema Pomodoro (25/5) cambiando los parámetros.
+ */
+function segmentarBloque(bloque, duracionSesion, duracionPausa, etiquetaAsignatura) {
+  const eventos = [];
+  let cursor = bloque.inicio;
+  let contadorSesiones = 0;
+
+  while (cursor < bloque.fin) {
+    const finSesion = Math.min(cursor + duracionSesion, bloque.fin);
+    const duracionReal = finSesion - cursor;
+
+    if (duracionReal < 10) break; // sobra muy poco tiempo, no vale la pena un micro-bloque
+
+    eventos.push({
+      tipo: 'estudio',
+      asignatura: etiquetaAsignatura,
+      inicio: cursor,
+      fin: finSesion,
+      duracion: duracionReal,
+    });
+    contadorSesiones++;
+    cursor = finSesion;
+
+    if (cursor < bloque.fin) {
+      const finPausa = Math.min(cursor + duracionPausa, bloque.fin);
+      eventos.push({
+        tipo: 'pausa',
+        etiqueta: duracionPausa >= 15 ? 'Pausa activa' : 'Micro-pausa',
+        inicio: cursor,
+        fin: finPausa,
+        duracion: finPausa - cursor,
+      });
+      cursor = finPausa;
+    }
+  }
+
+  return eventos;
+}
+
+// ----------------------------------------------------------------------------
+// 7. CLASIFICACIÓN DE BLOQUES LIBRES POR "CALIDAD" HORARIA
+// ----------------------------------------------------------------------------
+/**
+ * Etiqueta cada bloque libre según si cae en ventana matutina óptima,
+ * tarde temprana, o nocturna tardía. Esto permite que las asignaturas
+ * con dificultad 4-5 se asignen preferentemente a los bloques de mejor
+ * calidad horaria, tal como pide el requerimiento:
+ *   "preferencia matutina o tarde temprana, evitando altas horas de la noche"
+ */
+function calidadHoraria(bloque) {
+  const { HORA_INICIO_VENTANA_OPTIMA, HORA_FIN_VENTANA_OPTIMA,
+          HORA_INICIO_VENTANA_TARDE, HORA_FIN_VENTANA_TARDE,
+          HORA_LIMITE_NOCTURNA } = REGLAS_NEUROCIENCIA;
+
+  if (dentroDeVentana(bloque.inicio, bloque.fin, HORA_INICIO_VENTANA_OPTIMA, HORA_FIN_VENTANA_OPTIMA)) {
+    return 3; // mejor calidad: mañana
+  }
+  if (dentroDeVentana(bloque.inicio, bloque.fin, HORA_INICIO_VENTANA_TARDE, HORA_FIN_VENTANA_TARDE)) {
+    return 2; // buena calidad: tarde temprana
+  }
+  if (bloque.inicio >= HORA_LIMITE_NOCTURNA) {
+    return 0; // mala calidad: muy tarde en la noche
+  }
+  return 1; // calidad media (resto del día)
+}
+
+/**
+ * Aplana los bloques libres de toda la semana en una lista única con
+ * referencia al día, y los ordena de mejor a peor calidad horaria.
+ * Esto es la base para que el algoritmo de asignación reparta primero
+ * los mejores bloques a las asignaturas más difíciles.
+ */
+function listarYOrdenarBloquesPorCalidad(bloquesLibresPorDia) {
+  const lista = [];
+  for (const dia of DIAS_SEMANA) {
+    for (const bloque of bloquesLibresPorDia[dia]) {
+      lista.push({ dia, ...bloque, calidad: calidadHoraria(bloque) });
+    }
+  }
+  // Orden descendente de calidad; en empate, bloques más largos primero
+  // (mejor para sesiones de 90 min sin fragmentar de más).
+  return lista.sort((a, b) => (b.calidad - a.calidad) || ((b.fin - b.inicio) - (a.fin - a.inicio)));
+}
+
+// ----------------------------------------------------------------------------
+// 8. RESERVA DE AUTOCUIDADO
+// ----------------------------------------------------------------------------
+/**
+ * Antes de repartir tiempo de estudio, se reserva un bloque mínimo diario
+ * de autocuidado/descanso en los huecos libres, tal como exige el
+ * requerimiento: "Reserva obligatoria de espacios para el descanso y el
+ * autocuidado." Se intenta ubicar preferentemente al final del día.
+ */
+function reservarAutocuidado(bloquesLibresPorDia) {
+  const eventosAutocuidado = []; // { dia, inicio, fin }
+  const bloquesRestantes = {};
+
+  for (const dia of DIAS_SEMANA) {
+    const bloques = [...bloquesLibresPorDia[dia]].sort((a, b) => a.inicio - b.inicio);
+    bloquesRestantes[dia] = [];
+
+    let reservado = false;
+    for (let i = bloques.length - 1; i >= 0; i--) {
+      const b = bloques[i];
+      const duracion = b.fin - b.inicio;
+
+      if (!reservado && duracion >= REGLAS_NEUROCIENCIA.MIN_BLOQUE_AUTOCUIDADO_DIARIO + 10) {
+        const inicioAutocuidado = b.fin - REGLAS_NEUROCIENCIA.MIN_BLOQUE_AUTOCUIDADO_DIARIO;
+        eventosAutocuidado.push({ dia, inicio: inicioAutocuidado, fin: b.fin });
+        bloquesRestantes[dia].unshift({ inicio: b.inicio, fin: inicioAutocuidado });
+        reservado = true;
+      } else {
+        bloquesRestantes[dia].unshift({ inicio: b.inicio, fin: b.fin });
+      }
+    }
+
+    // Si ningún bloque del día alcanzó para reservar autocuidado, no se fuerza
+    // (evita romper la planificación en días con muy poco tiempo libre).
+  }
+
+  return { eventosAutocuidado, bloquesRestantes };
+}
+
+// ----------------------------------------------------------------------------
+// 9. ALGORITMO CENTRAL DE ASIGNACIÓN
+// ----------------------------------------------------------------------------
+/**
+ * Reparte los bloques libres (ya descontado el autocuidado) entre las
+ * asignaturas, respetando:
+ *   - minutosObjetivo por asignatura (de calcularMinutosObjetivoPorAsignatura)
+ *   - duracionSesion / duracionPausa (90/15 o 25/5 según estrategia)
+ *   - preferencia de bloques de alta calidad horaria para mayor dificultad
+ *
+ * Devuelve un calendario por día con eventos de tipo estudio/pausa/autocuidado.
+ */
+function asignarSesiones(bloquesLibresPorDia, asignaturasConObjetivo, { duracionSesion, duracionPausa }) {
+  const bloquesOrdenados = listarYOrdenarBloquesPorCalidad(bloquesLibresPorDia)
+    .map(b => ({ ...b, restante: b.fin - b.inicio }));
+
+  // Cola de asignaturas con dificultad alta primero (ya vienen ordenadas así
+  // desde calcularMinutosObjetivoPorAsignatura), cada una con un contador
+  // de minutos pendientes por asignar.
+  const pendientes = asignaturasConObjetivo.map(a => ({ ...a, minutosPendientes: a.minutosObjetivo }));
+
+  const calendario = Object.fromEntries(DIAS_SEMANA.map(d => [d, []]));
+  const minutosEstudioPorDia = Object.fromEntries(DIAS_SEMANA.map(d => [d, 0]));
+
+  for (const bloque of bloquesOrdenados) {
+    if (bloque.restante < 15) continue;
+
+    let espacioDisponible = bloque.restante;
+    let inicioCursor = bloque.fin - espacioDisponible;
+    let ultimaAsignaturaUsada = null; // clave para evitar rachas >90min de la misma materia
+
+    while (espacioDisponible >= 15 && pendientes.some(p => p.minutosPendientes > 0)) {
+      // Respeta el tope diario de estudio saludable: si ya se alcanzó, se
+      // detiene la asignación en este día (el resto del bloque queda libre,
+      // como tiempo de descanso/uso personal, no como estudio forzado).
+      if (minutosEstudioPorDia[bloque.dia] >= REGLAS_NEUROCIENCIA.MAX_MINUTOS_ESTUDIO_POR_DIA) break;
+
+      pendientes.sort((a, b) => b.minutosPendientes - a.minutosPendientes);
+
+      // Se busca la asignatura con más minutos pendientes que NO sea la misma
+      // que se usó en el sub-bloque inmediatamente anterior dentro de este
+      // bloque libre. Esto es lo que garantiza que, tras una sesión de hasta
+      // 90 min + su pausa, el siguiente sub-bloque sea de OTRA asignatura
+      // (salvo que sea la única con minutos pendientes).
+      let asignatura = pendientes.find(p => p.minutosPendientes > 0 && p.nombre !== ultimaAsignaturaUsada);
+      if (!asignatura) {
+        asignatura = pendientes.find(p => p.minutosPendientes > 0);
+      }
+      if (!asignatura) break;
+
+      const margenDiario = REGLAS_NEUROCIENCIA.MAX_MINUTOS_ESTUDIO_POR_DIA - minutosEstudioPorDia[bloque.dia];
+      const tiempoMaxSesionUnica = Math.min(duracionSesion, margenDiario); // una sola sesión, no 4 seguidas
+      const tiempoAUsar = Math.min(espacioDisponible, asignatura.minutosPendientes, tiempoMaxSesionUnica);
+
+      if (tiempoAUsar < 10) break;
+
+      const subBloque = { inicio: inicioCursor, fin: inicioCursor + tiempoAUsar };
+      const eventoEstudio = {
+        tipo: 'estudio',
+        asignatura: asignatura.nombre,
+        dificultad: asignatura.dificultad,
+        dia: bloque.dia,
+        inicio: subBloque.inicio,
+        fin: subBloque.fin,
+        duracion: tiempoAUsar,
+      };
+      calendario[bloque.dia].push(eventoEstudio);
+
+      asignatura.minutosPendientes -= tiempoAUsar;
+      minutosEstudioPorDia[bloque.dia] += tiempoAUsar;
+      espacioDisponible -= tiempoAUsar;
+      inicioCursor += tiempoAUsar;
+      ultimaAsignaturaUsada = asignatura.nombre;
+
+      // Inserta la pausa obligatoria si queda espacio y aún hay trabajo por hacer.
+      if (espacioDisponible >= 10 && pendientes.some(p => p.minutosPendientes > 0)) {
+        const pausaReal = Math.min(duracionPausa, espacioDisponible);
+        calendario[bloque.dia].push({
+          tipo: 'pausa',
+          etiqueta: duracionPausa >= 15 ? 'Pausa activa' : 'Micro-pausa',
+          dia: bloque.dia,
+          inicio: inicioCursor,
+          fin: inicioCursor + pausaReal,
+          duracion: pausaReal,
+        });
+        espacioDisponible -= pausaReal;
+        inicioCursor += pausaReal;
+      }
+    }
+  }
+
+  // Ordenar eventos de cada día cronológicamente.
+  for (const dia of DIAS_SEMANA) {
+    calendario[dia].sort((a, b) => a.inicio - b.inicio);
+  }
+
+  const resumenPendientes = pendientes
+    .filter(p => p.minutosPendientes > 0)
+    .map(p => ({ nombre: p.nombre, minutosNoAsignados: p.minutosPendientes }));
+
+  return { calendario, resumenPendientes };
+}
+
+// ----------------------------------------------------------------------------
+// 10. FORMATEO DE SALIDA VISUALIZABLE
+// ----------------------------------------------------------------------------
+/**
+ * Convierte el calendario interno (en minutos) a una estructura amigable
+ * para tablas/UI, con horas en formato HH:MM y textos descriptivos listos
+ * para renderizar, manteniendo también los datos crudos por si se necesita
+ * dibujar un calendario gráfico en vez de una tabla.
+ */
+function formatearCalendarioParaUI(calendario, eventosAutocuidado, nombreEstrategia) {
+  const dias = {};
+
+  for (const dia of DIAS_SEMANA) {
+    const eventosDia = [...calendario[dia]];
+    const autocuidadoDia = eventosAutocuidado.filter(e => e.dia === dia);
+    autocuidadoDia.forEach(a => eventosDia.push({ tipo: 'autocuidado', etiqueta: 'Autocuidado / Descanso', inicio: a.inicio, fin: a.fin, duracion: a.fin - a.inicio, dia }));
+
+    eventosDia.sort((a, b) => a.inicio - b.inicio);
+
+    dias[dia] = eventosDia.map(ev => ({
+      bloqueHorario: `${minutosAHora(ev.inicio)} - ${minutosAHora(ev.fin)}`,
+      tipo: ev.tipo, // 'estudio' | 'pausa' | 'autocuidado'
+      actividad: ev.tipo === 'estudio'
+        ? ev.asignatura
+        : (ev.etiqueta || 'Pausa'),
+      detalle: ev.tipo === 'estudio'
+        ? `Dificultad ${ev.dificultad} · ${ev.duracion} min de enfoque`
+        : `${ev.duracion} min`,
+      duracionMin: ev.duracion,
+    }));
+  }
+
+  const minutosEstudioTotales = Object.values(calendario)
+    .flat()
+    .filter(e => e.tipo === 'estudio')
+    .reduce((acc, e) => acc + e.duracion, 0);
+
+  return {
+    estrategia: nombreEstrategia,
+    resumen: {
+      minutosEstudioTotales,
+      horasEstudioTotales: +(minutosEstudioTotales / 60).toFixed(1),
+    },
+    dias,
+  };
+}
+
+// ----------------------------------------------------------------------------
+// 11. LAS 3 ESTRATEGIAS DE GENERACIÓN
+// ----------------------------------------------------------------------------
+
+/**
+ * Opción 1 — Enfoque Intensivo por Bloques.
+ * Sesiones de hasta 90 min con pausa de 15 min. Prioriza fuertemente la
+ * dificultad: las asignaturas de nivel 4-5 reciben más tiempo y los mejores
+ * bloques horarios (mañana / tarde temprana).
+ */
+function generarOpcionEnfoqueIntensivo(bloquesLibresPorDia, asignaturas, minutosTotales) {
+  const objetivo = calcularMinutosObjetivoPorAsignatura(asignaturas, minutosTotales, {
+    pesoFn: (a) => a.dificultad ** 1.5, // exponente para acentuar aún más la prioridad de los ramos difíciles
+    minimoPorRamo: 45,
+  });
+
+  const { eventosAutocuidado, bloquesRestantes } = reservarAutocuidado(bloquesLibresPorDia);
+
+  const { calendario, resumenPendientes } = asignarSesiones(bloquesRestantes, objetivo, {
+    duracionSesion: REGLAS_NEUROCIENCIA.DURACION_MAX_SESION_CONTINUA,
+    duracionPausa: REGLAS_NEUROCIENCIA.PAUSA_ACTIVA_OBLIGATORIA,
+  });
+
+  const salida = formatearCalendarioParaUI(calendario, eventosAutocuidado, 'Opción 1: Enfoque Intensivo por Bloques');
+  salida.descripcion = 'Sesiones largas (hasta 90 min) en los bloques de mejor calidad horaria, con fuerte prioridad para las asignaturas más difíciles.';
+  salida.resumenPendientes = resumenPendientes;
+  return salida;
+}
+
+/**
+ * Opción 2 — Distribución Fragmentada Pomodoro.
+ * Usa ciclos de 25/5 (con pausa larga cada 4 ciclos) y reparte el tiempo
+ * de forma algo más pareja entre asignaturas, aunque conservando algo de
+ * prioridad por dificultad para no perder la lógica del problema original.
+ */
+function generarOpcionPomodoro(bloquesLibresPorDia, asignaturas, minutosTotales) {
+  const objetivo = calcularMinutosObjetivoPorAsignatura(asignaturas, minutosTotales, {
+    pesoFn: (a) => a.dificultad, // prioridad lineal, más suave que la opción 1
+    minimoPorRamo: 50,
+  });
+
+  const { eventosAutocuidado, bloquesRestantes } = reservarAutocuidado(bloquesLibresPorDia);
+
+  // Para Pomodoro, la "duracionSesion" pasada a asignarSesiones representa
+  // un ciclo completo de pomodoros consecutivos antes de forzar pausa larga.
+  const cicloCompleto = REGLAS_NEUROCIENCIA.DURACION_BLOQUE_POMODORO * REGLAS_NEUROCIENCIA.PAUSA_LARGA_CADA_N_POMODOROS
+    + REGLAS_NEUROCIENCIA.PAUSA_POMODORO * (REGLAS_NEUROCIENCIA.PAUSA_LARGA_CADA_N_POMODOROS - 1);
+
+  const { calendario, resumenPendientes } = asignarSesionesPomodoro(bloquesRestantes, objetivo);
+
+  const salida = formatearCalendarioParaUI(calendario, eventosAutocuidado, 'Opción 2: Distribución Fragmentada Pomodoro');
+  salida.descripcion = 'Ciclos de 25 min de estudio + 5 min de pausa, con una pausa larga de 20 min cada 4 ciclos. Ideal para mantener el enfoque sin saturarse.';
+  salida.resumenPendientes = resumenPendientes;
+  return salida;
+}
+
+/**
+ * Variante de asignarSesiones especializada en pomodoros, porque la
+ * estructura de pausas (larga cada 4 ciclos) es distinta a la regla
+ * genérica de 90/15 usada en las otras dos opciones.
+ */
+function asignarSesionesPomodoro(bloquesLibresPorDia, asignaturasConObjetivo) {
+  const { DURACION_BLOQUE_POMODORO, PAUSA_POMODORO, PAUSA_LARGA_CADA_N_POMODOROS, PAUSA_LARGA_DURACION, MAX_MINUTOS_ESTUDIO_POR_DIA } = REGLAS_NEUROCIENCIA;
+
+  const bloquesOrdenados = listarYOrdenarBloquesPorCalidad(bloquesLibresPorDia)
+    .map(b => ({ ...b, restante: b.fin - b.inicio }));
+
+  const pendientes = asignaturasConObjetivo.map(a => ({ ...a, minutosPendientes: a.minutosObjetivo }));
+  const calendario = Object.fromEntries(DIAS_SEMANA.map(d => [d, []]));
+  const minutosEstudioPorDia = Object.fromEntries(DIAS_SEMANA.map(d => [d, 0]));
+
+  for (const bloque of bloquesOrdenados) {
+    let cursor = bloque.inicio;
+    let pomodorosEnRacha = 0;
+    let ultimaAsignaturaUsada = null;
+
+    while (cursor < bloque.fin && pendientes.some(p => p.minutosPendientes > 0)) {
+      if (minutosEstudioPorDia[bloque.dia] >= MAX_MINUTOS_ESTUDIO_POR_DIA) break;
+
+      pendientes.sort((a, b) => b.minutosPendientes - a.minutosPendientes);
+
+      // Alterna asignatura cada 2 pomodoros (50 min) para variar el foco,
+      // salvo que sea la única pendiente.
+      const debeAlternar = pomodorosEnRacha > 0 && pomodorosEnRacha % 2 === 0;
+      let asignatura = debeAlternar
+        ? pendientes.find(p => p.minutosPendientes > 0 && p.nombre !== ultimaAsignaturaUsada)
+        : pendientes.find(p => p.minutosPendientes > 0 && p.nombre === ultimaAsignaturaUsada);
+      if (!asignatura) asignatura = pendientes.find(p => p.minutosPendientes > 0);
+      if (!asignatura) break;
+
+      const margenDiario = MAX_MINUTOS_ESTUDIO_POR_DIA - minutosEstudioPorDia[bloque.dia];
+      const finPomodoro = Math.min(cursor + DURACION_BLOQUE_POMODORO, bloque.fin);
+      const duracionReal = Math.min(finPomodoro - cursor, margenDiario);
+      if (duracionReal < 10) break;
+
+      calendario[bloque.dia].push({
+        tipo: 'estudio', asignatura: asignatura.nombre, dificultad: asignatura.dificultad,
+        inicio: cursor, fin: cursor + duracionReal, duracion: duracionReal, dia: bloque.dia,
+      });
+      asignatura.minutosPendientes -= duracionReal;
+      minutosEstudioPorDia[bloque.dia] += duracionReal;
+      cursor += duracionReal;
+      pomodorosEnRacha++;
+      ultimaAsignaturaUsada = asignatura.nombre;
+
+      if (cursor >= bloque.fin || minutosEstudioPorDia[bloque.dia] >= MAX_MINUTOS_ESTUDIO_POR_DIA) break;
+
+      const esPausaLarga = pomodorosEnRacha % PAUSA_LARGA_CADA_N_POMODOROS === 0;
+      const duracionPausa = esPausaLarga ? PAUSA_LARGA_DURACION : PAUSA_POMODORO;
+      const finPausa = Math.min(cursor + duracionPausa, bloque.fin);
+
+      calendario[bloque.dia].push({
+        tipo: 'pausa', etiqueta: esPausaLarga ? 'Pausa larga' : 'Micro-pausa',
+        inicio: cursor, fin: finPausa, duracion: finPausa - cursor, dia: bloque.dia,
+      });
+      cursor = finPausa;
+    }
+  }
+
+  for (const dia of DIAS_SEMANA) calendario[dia].sort((a, b) => a.inicio - b.inicio);
+
+  const resumenPendientes = pendientes
+    .filter(p => p.minutosPendientes > 0)
+    .map(p => ({ nombre: p.nombre, minutosNoAsignados: p.minutosPendientes }));
+
+  return { calendario, resumenPendientes };
+}
+
+/**
+ * Opción 3 — Balance Equilibrado de Fines de Semana.
+ * Distribuye el peso de estudio de forma más uniforme entre todos los días
+ * de la semana (incluyendo sábado/domingo en bloques cortos), evitando
+ * concentrar todo en días de semana y dejando el fin de semana solo para
+ * "descanso total". Aquí el fin de semana absorbe parte de la carga para
+ * descomprimir los días de clases, pero en sesiones más suaves (60 min máx).
+ */
+function generarOpcionBalanceFinDeSemana(bloquesLibresPorDia, asignaturas, minutosTotales) {
+  const objetivo = calcularMinutosObjetivoPorAsignatura(asignaturas, minutosTotales, {
+    pesoFn: (a) => a.dificultad,
+    minimoPorRamo: 40,
+  });
+
+  const { eventosAutocuidado, bloquesRestantes } = reservarAutocuidado(bloquesLibresPorDia);
+
+  // Límite de sesión más corto (60 min) para que el ritmo se sienta más
+  // liviano y sostenible a lo largo de toda la semana, incluyendo findes.
+  const { calendario, resumenPendientes } = asignarSesiones(bloquesRestantes, objetivo, {
+    duracionSesion: 60,
+    duracionPausa: REGLAS_NEUROCIENCIA.PAUSA_ACTIVA_OBLIGATORIA,
+  });
+
+  const salida = formatearCalendarioParaUI(calendario, eventosAutocuidado, 'Opción 3: Balance Equilibrado de Fin de Semana');
+  salida.descripcion = 'Sesiones más cortas (máx. 60 min) repartidas a lo largo de toda la semana, incluyendo sábado y domingo en dosis bajas, para sostener el ritmo sin sacrificar el descanso de fin de semana.';
+  salida.resumenPendientes = resumenPendientes;
+  return salida;
+}
+
+// ----------------------------------------------------------------------------
+// 12. FUNCIÓN PRINCIPAL EXPORTADA — PUNTO DE ENTRADA DEL MOTOR
+// ----------------------------------------------------------------------------
+/**
+ * generarRutinasDeEstudio(inputData)
+ *
+ * Esta es la función que el front-end (o un backend) debe invocar.
+ * Recibe el objeto con la forma descrita en la sección 3 y devuelve
+ * un objeto con las 3 alternativas ya formateadas para visualizar.
+ */
+function generarRutinasDeEstudio(inputData) {
+  const {
+    ocupaciones = [],
+    asignaturas = [],
+    disponibilidad = null,
+    horaInicioDia = '07:00',
+    horaFinDia = '23:00',
+  } = inputData;
+
+  if (!asignaturas.length) {
+    throw new Error('Se requiere al menos una asignatura con su dificultad percibida.');
+  }
+
+  // Si el usuario ya declaró bloques de disponibilidad explícitos (paso 5-6
+  // del storytelling: "seleccionar cupos disponibles"), se usan directo.
+  // Si no, se infieren a partir de las ocupaciones fijas.
+  let bloquesLibresPorDia;
+  if (disponibilidad && disponibilidad.length) {
+    bloquesLibresPorDia = Object.fromEntries(DIAS_SEMANA.map(d => [d, []]));
+    disponibilidad.forEach(b => {
+      if (bloquesLibresPorDia[b.dia]) {
+        bloquesLibresPorDia[b.dia].push({ inicio: horaAMinutos(b.inicio), fin: horaAMinutos(b.fin) });
+      }
+    });
+  } else {
+    bloquesLibresPorDia = calcularBloquesLibres(ocupaciones, horaInicioDia, horaFinDia);
+  }
+
+  const minutosTotalesDisponibles = Object.values(bloquesLibresPorDia)
+    .flat()
+    .reduce((acc, b) => acc + (b.fin - b.inicio), 0);
+
+  if (minutosTotalesDisponibles === 0) {
+    throw new Error('No se detectaron bloques de tiempo libre con la información entregada. Revisa el horario de clases y hábitos fijos.');
+  }
+
+  // Cada estrategia recibe una copia profunda de bloquesLibresPorDia porque
+  // reservarAutocuidado() y asignarSesiones() consumen/transforman la
+  // estructura internamente; no queremos que una opción contamine a otra.
+  const clonar = (obj) => JSON.parse(JSON.stringify(obj));
+
+  const opcion1 = generarOpcionEnfoqueIntensivo(clonar(bloquesLibresPorDia), asignaturas, minutosTotalesDisponibles);
+  const opcion2 = generarOpcionPomodoro(clonar(bloquesLibresPorDia), asignaturas, minutosTotalesDisponibles);
+  const opcion3 = generarOpcionBalanceFinDeSemana(clonar(bloquesLibresPorDia), asignaturas, minutosTotalesDisponibles);
+
+  return {
+    metadata: {
+      generadoEn: new Date().toISOString(),
+      minutosLibresDetectados: minutosTotalesDisponibles,
+      horasLibresDetectadas: +(minutosTotalesDisponibles / 60).toFixed(1),
+      cantidadAsignaturas: asignaturas.length,
+      reglasAplicadas: REGLAS_NEUROCIENCIA,
+    },
+    opciones: [opcion1, opcion2, opcion3],
+  };
+}
+
+// ----------------------------------------------------------------------------
+
+// ============================================================================
+// INTERFAZ DE USUARIO — conecta el formulario con generarRutinasDeEstudio()
+// ============================================================================
+
+const DIAS_UI = ['Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado', 'Domingo'];
+
+function agregarOcupacion(valores) {
+  const container = document.getElementById('ocupaciones-container');
+  const row = document.createElement('div');
+  row.className = 'ocupacion-row';
+
+  const v = valores || { dia: 'Lunes', inicio: '08:30', fin: '10:00', etiqueta: 'Clase' };
+
+  row.innerHTML = `
+    <select class="oc-dia">${DIAS_UI.map(d => `<option ${d === v.dia ? 'selected' : ''}>${d}</option>`).join('')}</select>
+    <input type="time" class="oc-inicio" value="${v.inicio}">
+    <input type="time" class="oc-fin" value="${v.fin}">
+    <input type="text" class="oc-etiqueta" placeholder="Ej: Cálculo I, Almuerzo..." value="${v.etiqueta}">
+    <button class="remove" onclick="this.closest('.ocupacion-row').remove()" type="button">✕</button>
+  `;
+  container.appendChild(row);
+}
+
+function agregarRamo(valores) {
+  const container = document.getElementById('ramos-container');
+  const row = document.createElement('div');
+  row.className = 'ramo-row';
+  const v = valores || { nombre: '', dificultad: 3 };
+
+  row.innerHTML = `
+    <input type="text" class="ramo-nombre" placeholder="Ej: Cálculo I" value="${v.nombre}">
+    <select class="ramo-dificultad">
+      ${[1,2,3,4,5].map(n => `<option value="${n}" ${n === v.dificultad ? 'selected' : ''}>Dificultad ${n}${n===1?' (fácil)':n===5?' (difícil)':''}</option>`).join('')}
+    </select>
+    <button class="remove" onclick="this.closest('.ramo-row').remove()" type="button">✕</button>
+  `;
+  container.appendChild(row);
+}
+
+function leerOcupacionesDelFormulario() {
+  return [...document.querySelectorAll('.ocupacion-row')].map(row => ({
+    dia: row.querySelector('.oc-dia').value,
+    inicio: row.querySelector('.oc-inicio').value,
+    fin: row.querySelector('.oc-fin').value,
+    etiqueta: row.querySelector('.oc-etiqueta').value || 'Ocupado',
+    tipo: 'fijo',
+  })).filter(o => o.inicio && o.fin && o.inicio !== o.fin);
+}
+
+function leerAsignaturasDelFormulario() {
+  return [...document.querySelectorAll('.ramo-row')].map((row, i) => ({
+    id: 'ramo_' + i,
+    nombre: row.querySelector('.ramo-nombre').value.trim(),
+    dificultad: parseInt(row.querySelector('.ramo-dificultad').value, 10),
+  })).filter(r => r.nombre.length > 0);
+}
+
+function ejecutarMotor() {
+  const errorContainer = document.getElementById('error-container');
+  const resultados = document.getElementById('resultados');
+  errorContainer.innerHTML = '';
+  resultados.classList.add('hidden');
+
+  const ocupaciones = leerOcupacionesDelFormulario();
+  const asignaturas = leerAsignaturasDelFormulario();
+
+  let resultado;
+  try {
+    resultado = generarRutinasDeEstudio({ ocupaciones, asignaturas });
+  } catch (e) {
+    errorContainer.innerHTML = `<div class="error-box">⚠️ ${e.message}</div>`;
+    return;
+  }
+
+  pintarResultados(resultado);
+}
+
+function pintarResultados(resultado) {
+  const tabsContainer = document.getElementById('tabs-container');
+  const contenido = document.getElementById('contenido-opciones');
+
+  tabsContainer.innerHTML = resultado.opciones.map((op, i) =>
+    `<button class="tab-btn ${i === 0 ? 'active' : ''}" data-idx="${i}" onclick="cambiarTab(${i})" type="button">
+      ${op.estrategia.split(':')[0]}
+    </button>`
+  ).join('');
+
+  contenido.innerHTML = resultado.opciones.map((op, i) => `
+    <div class="tab-pane ${i === 0 ? '' : 'hidden'}" id="pane-${i}">
+      <p class="descripcion"><strong>${op.estrategia}</strong><br>${op.descripcion}</p>
+      <span class="resumen-pill">Total semanal: ${op.resumen.horasEstudioTotales} horas de estudio</span>
+      ${op.resumenPendientes.length ? `<p class="pendiente-warning">⚠️ No se alcanzó a asignar todo el tiempo objetivo de: ${op.resumenPendientes.map(p => `${p.nombre} (${p.minutosNoAsignados} min)`).join(', ')}</p>` : ''}
+      ${DIAS_UI.map(dia => {
+        const eventos = op.dias[dia];
+        if (!eventos || eventos.length === 0) return '';
+        return `
+          <div class="dia-titulo">${dia}</div>
+          <table>
+            <thead><tr><th>Bloque horario</th><th>Actividad</th><th>Detalle</th></tr></thead>
+            <tbody>
+              ${eventos.map(ev => `<tr class="${ev.tipo}">
+                <td>${ev.bloqueHorario}</td>
+                <td>${ev.actividad}</td>
+                <td>${ev.detalle}</td>
+              </tr>`).join('')}
+            </tbody>
+          </table>
+        `;
+      }).join('')}
+    </div>
+  `).join('');
+
+  document.getElementById('resultados').classList.remove('hidden');
+}
+
+function cambiarTab(idx) {
+  document.querySelectorAll('.tab-btn').forEach((b, i) => b.classList.toggle('active', i === idx));
+  document.querySelectorAll('.tab-pane').forEach((p, i) => p.classList.toggle('hidden', i !== idx));
+}
+
+// --- Precarga de ejemplo para que el formulario no aparezca vacío ---
+window.addEventListener('DOMContentLoaded', () => {
+  agregarOcupacion({ dia: 'Lunes', inicio: '08:30', fin: '10:00', etiqueta: 'Cálculo I' });
+  agregarOcupacion({ dia: 'Lunes', inicio: '13:00', fin: '14:00', etiqueta: 'Almuerzo' });
+  agregarOcupacion({ dia: 'Martes', inicio: '09:00', fin: '11:00', etiqueta: 'Programación' });
+  agregarOcupacion({ dia: 'Miércoles', inicio: '08:30', fin: '10:00', etiqueta: 'Cálculo I' });
+  agregarOcupacion({ dia: 'Viernes', inicio: '08:30', fin: '10:00', etiqueta: 'Estadística' });
+
+  agregarRamo({ nombre: 'Cálculo I', dificultad: 5 });
+  agregarRamo({ nombre: 'Física I', dificultad: 4 });
+  agregarRamo({ nombre: 'Programación', dificultad: 2 });
+  agregarRamo({ nombre: 'Estadística', dificultad: 3 });
+});
+</script></body></html>
