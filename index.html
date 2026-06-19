@@ -3,7 +3,14 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>StudyBalance v2 — Motor de Calendarización Inteligente</title>
+<title>StudyBalance v3 — Motor de Calendarización Inteligente</title>
+
+<!-- Librerías para exportar PDF e importar Excel/CSV (CDN, requieren Internet la 1ra vez) -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
+
 <style>
   :root {
     --sb-bg:            #0f172a;
@@ -24,6 +31,8 @@
     --sb-danger-bg:     #450a0a;
     --sb-danger-text:   #fecaca;
     --sb-warning-text:  #fcd34d;
+    --sb-success-bg:    #064e3b;
+    --sb-success-text:  #a7f3d0;
   }
   @media (prefers-color-scheme: light) {
     :root {
@@ -42,32 +51,29 @@
       --sb-danger-bg:     #fef2f2;
       --sb-danger-text:   #991b1b;
       --sb-warning-text:  #92400e;
+      --sb-success-bg:    #ecfdf5;
+      --sb-success-text:  #065f46;
     }
   }
 
   * { box-sizing: border-box; }
   body {
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    background: var(--sb-bg);
-    color: var(--sb-text);
+    background: var(--sb-bg); color: var(--sb-text);
     margin: 0; padding: 0;
   }
-  header {
+  header.app-header {
     background: linear-gradient(135deg, #4338ca, #6366f1);
-    color: white;
-    padding: 1.2rem 2rem;
+    color: white; padding: 1.2rem 2rem;
   }
-  header h1 { margin: 0; font-size: 1.5rem; }
-  header p { margin: 0.3rem 0 0; font-size: 0.85rem; opacity: 0.95; }
+  header.app-header h1 { margin: 0; font-size: 1.5rem; }
+  header.app-header p { margin: 0.3rem 0 0; font-size: 0.85rem; opacity: 0.95; }
   main { max-width: 1200px; margin: 0 auto; padding: 1.5rem; }
 
   .card {
-    background: var(--sb-surface);
-    border-radius: 14px;
-    padding: 1.5rem;
+    background: var(--sb-surface); border-radius: 14px; padding: 1.5rem;
     box-shadow: 0 1px 3px rgba(0,0,0,0.15);
-    margin-bottom: 1.5rem;
-    border: 1px solid var(--sb-border);
+    margin-bottom: 1.5rem; border: 1px solid var(--sb-border);
   }
   .card h2 { margin-top: 0; font-size: 1.1rem; color: var(--sb-text); }
   .descripcion { color: var(--sb-text-muted); font-size: 0.85rem; margin-bottom: 1rem; }
@@ -83,8 +89,7 @@
     background: none; border: none; cursor: pointer; color: #ef4444; font-size: 1rem;
   }
   .ocupacion-row {
-    display: grid;
-    grid-template-columns: 1fr 90px 90px 1fr auto;
+    display: grid; grid-template-columns: 1fr 90px 90px 1fr auto;
     gap: 0.5rem; margin-bottom: 0.5rem; align-items: center;
   }
   .ocupacion-row select, .ocupacion-row input {
@@ -100,11 +105,11 @@
   .btn:hover { background: var(--sb-accent-hover); }
   .btn-secondary { background: var(--sb-surface-2); color: var(--sb-text); }
   .btn-secondary:hover { background: var(--sb-border); }
+  .btn-sm { padding: 0.4rem 0.8rem; font-size: 0.85rem; }
 
-  .tabs {
-    display: flex; gap: 0.5rem; border-bottom: 2px solid var(--sb-border);
-    margin-bottom: 1rem; flex-wrap: wrap;
-  }
+  .toolbar-row { display: flex; flex-wrap: wrap; gap: 0.5rem; align-items: center; margin-top: 0.8rem; }
+
+  .tabs { display: flex; gap: 0.5rem; border-bottom: 2px solid var(--sb-border); margin-bottom: 1rem; flex-wrap: wrap; }
   .tab-btn {
     background: none; border: none; padding: 0.6rem 1rem; cursor: pointer;
     font-size: 0.9rem; color: var(--sb-text-muted); border-bottom: 3px solid transparent;
@@ -120,25 +125,27 @@
     background: none; border: none; padding: 0.4rem 0.9rem; border-radius: 8px;
     cursor: pointer; color: var(--sb-text-muted); font-weight: 600; font-size: 0.85rem;
   }
-  .view-toggle button.active {
-    background: var(--sb-accent); color: white;
-  }
+  .view-toggle button.active { background: var(--sb-accent); color: white; }
 
   .resumen-pill {
     display: inline-block; background: var(--sb-surface-2); color: var(--sb-text);
     padding: 0.3rem 0.7rem; border-radius: 20px; font-size: 0.8rem;
-    font-weight: 600; margin: 0 0.4rem 0.6rem 0;
-    border: 1px solid var(--sb-border);
+    font-weight: 600; margin: 0 0.4rem 0.6rem 0; border: 1px solid var(--sb-border);
   }
 
   .error-box {
     background: var(--sb-danger-bg); color: var(--sb-danger-text);
     border: 1px solid #b91c1c; padding: 0.8rem; border-radius: 10px; font-size: 0.85rem;
   }
+  .success-box {
+    background: var(--sb-success-bg); color: var(--sb-success-text);
+    border: 1px solid #10b981; padding: 0.8rem; border-radius: 10px; font-size: 0.85rem;
+    margin-bottom: 1rem;
+  }
   .pendiente-warning { color: var(--sb-warning-text); font-size: 0.85rem; margin-top: 0.5rem; }
   .hidden { display: none; }
 
-  /* === Vista Lista (tabla legible) === */
+  /* Lista */
   .lista-vista table { width: 100%; border-collapse: collapse; font-size: 0.85rem; }
   .lista-vista th {
     background: var(--sb-surface-2); text-align: left; padding: 0.6rem;
@@ -150,7 +157,7 @@
   .lista-vista tr.autocuidado td { color: var(--sb-autocuidado-bg); }
   .dia-titulo { font-weight: 700; margin: 1rem 0 0.4rem; color: var(--sb-text); font-size: 0.95rem; }
 
-  /* === Vista Grid === */
+  /* Grid */
   .sb-grid-wrapper {
     background: var(--sb-surface); border-radius: 14px; padding: 1rem;
     overflow-x: auto; border: 1px solid var(--sb-border);
@@ -159,15 +166,12 @@
     display: grid; grid-template-columns: 60px repeat(7, minmax(110px, 1fr));
     gap: 2px; margin-bottom: 4px;
   }
-  .sb-grid-corner { background: transparent; }
   .sb-grid-dia {
     text-align: center; font-weight: 700; padding: 0.5rem;
-    color: var(--sb-text); border-bottom: 2px solid var(--sb-border);
-    font-size: 0.85rem;
+    color: var(--sb-text); border-bottom: 2px solid var(--sb-border); font-size: 0.85rem;
   }
   .sb-grid {
-    display: grid;
-    grid-template-columns: 60px repeat(7, minmax(110px, 1fr));
+    display: grid; grid-template-columns: 60px repeat(7, minmax(110px, 1fr));
     gap: 1px; background: var(--sb-border); position: relative;
   }
   .sb-grid-hora {
@@ -177,14 +181,12 @@
   }
   .sb-grid-slot { background: var(--sb-surface-2); opacity: 0.5; }
   .sb-grid-slot.borde-hora { border-top: 1px solid var(--sb-border); }
-
   .sb-bloque {
     border-radius: 6px; padding: 4px 6px; margin: 1px;
     color: var(--sb-text-on-color); font-size: 0.72rem;
     cursor: pointer; overflow: hidden;
     box-shadow: inset 0 -2px 0 rgba(0,0,0,0.18);
-    transition: transform 0.15s, box-shadow 0.15s;
-    z-index: 1;
+    transition: transform 0.15s, box-shadow 0.15s; z-index: 1;
   }
   .sb-bloque:hover { transform: scale(1.03); box-shadow: 0 4px 12px rgba(0,0,0,0.35); z-index: 2; }
   .sb-bloque--estudio      { background: var(--sb-estudio-bg); }
@@ -195,19 +197,13 @@
   .sb-bloque__hora    { font-size: 0.68rem; opacity: 0.9; margin-top: 1px; }
   .sb-bloque__detalle { font-size: 0.68rem; margin-top: 2px; opacity: 0.9; }
 
-  /* === Leyenda === */
   .sb-leyenda { display: flex; gap: 1rem; flex-wrap: wrap; margin: 0.8rem 0; font-size: 0.8rem; }
   .sb-leyenda span { display: inline-flex; align-items: center; gap: 0.3rem; color: var(--sb-text); }
-  .sb-leyenda .swatch {
-    width: 14px; height: 14px; border-radius: 4px; display: inline-block;
-  }
+  .sb-leyenda .swatch { width: 14px; height: 14px; border-radius: 4px; display: inline-block; }
 
-  /* === Métodos de estudio === */
+  /* Métodos */
   .sb-metodos { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1rem; margin-top: 1rem; }
-  .sb-metodo {
-    background: var(--sb-surface-2); border: 1px solid var(--sb-border);
-    border-radius: 12px; padding: 1rem;
-  }
+  .sb-metodo { background: var(--sb-surface-2); border: 1px solid var(--sb-border); border-radius: 12px; padding: 1rem; }
   .sb-metodo header { display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.5rem; }
   .sb-metodo h4 { margin: 0; flex: 1; font-size: 1rem; color: var(--sb-text); }
   .sb-metodo__icono { font-size: 1.5rem; }
@@ -221,10 +217,7 @@
     margin: 0.5rem 0;
   }
   .sb-metodo p { color: var(--sb-text-muted); font-size: 0.85rem; margin: 0.5rem 0; }
-  .sb-metodo details summary {
-    cursor: pointer; font-weight: 600; color: var(--sb-accent);
-    font-size: 0.85rem; margin-top: 0.5rem;
-  }
+  .sb-metodo details summary { cursor: pointer; font-weight: 600; color: var(--sb-accent); font-size: 0.85rem; margin-top: 0.5rem; }
   .sb-metodo ul { margin: 0.5rem 0 0; padding-left: 1.2rem; color: var(--sb-text); font-size: 0.85rem; }
   .sb-metodo ul li { margin-bottom: 0.4rem; }
 
@@ -232,19 +225,53 @@
   .sb-tips-card ul { padding-left: 1.2rem; color: var(--sb-text); }
   .sb-tips-card ul li { margin-bottom: 0.5rem; font-size: 0.88rem; }
 
-  /* === Accesibilidad === */
+  .favoritos-row { display: flex; gap: 0.5rem; align-items: center; flex-wrap: wrap; }
+  .favoritos-row select, .favoritos-row input {
+    padding: 0.45rem; border: 1px solid var(--sb-border); border-radius: 8px;
+    font-size: 0.85rem; background: var(--sb-surface-2); color: var(--sb-text);
+  }
+  .file-label {
+    display: inline-block; background: var(--sb-surface-2); color: var(--sb-text);
+    padding: 0.5rem 0.9rem; border-radius: 10px; cursor: pointer; font-size: 0.85rem;
+    border: 1px solid var(--sb-border); font-weight: 600;
+  }
+  .file-label:hover { background: var(--sb-border); }
+  input[type="file"] { display: none; }
+
   *:focus-visible { outline: 3px solid var(--sb-focus-ring); outline-offset: 2px; border-radius: 4px; }
   @media (prefers-reduced-motion: reduce) { .sb-bloque { transition: none; } }
+
+  footer {
+    text-align: center; padding: 1.5rem; color: var(--sb-text-muted);
+    font-size: 0.8rem; border-top: 1px solid var(--sb-border); margin-top: 2rem;
+  }
 </style>
 </head>
 <body>
 
-<header>
-  <h1>🌱 StudyBalance v2 — Motor de Calendarización</h1>
+<header class="app-header">
+  <h1>🌱 StudyBalance v3 — Motor de Calendarización</h1>
   <p>Proyecto TDFI101 · Grupo 2 · UNAB Sede Antonio Varas · ODS 3: Salud y Bienestar</p>
 </header>
 
 <main>
+
+  <!-- IMPORTAR / FAVORITOS -->
+  <div class="card">
+    <h2>📥 Importar horario o cargar favorito</h2>
+    <p class="descripcion">Importa tu horario desde Excel/CSV (columnas: <code>dia, inicio, fin, etiqueta</code>) o carga una rutina guardada previamente.</p>
+    <div class="favoritos-row">
+      <label class="file-label" for="file-import">📄 Importar Excel/CSV</label>
+      <input type="file" id="file-import" accept=".csv,.xlsx,.xls" onchange="importarArchivo(event)">
+
+      <select id="favoritos-select" aria-label="Favoritos guardados">
+        <option value="">— Cargar favorito —</option>
+      </select>
+      <button class="btn btn-secondary btn-sm" onclick="cargarFavorito()" type="button">📂 Cargar</button>
+      <button class="btn btn-secondary btn-sm" onclick="eliminarFavorito()" type="button">🗑️ Eliminar</button>
+    </div>
+    <div id="import-feedback"></div>
+  </div>
 
   <div class="card">
     <h2>1. Horario fijo (clases y hábitos)</h2>
@@ -273,9 +300,13 @@
 
 </main>
 
+<footer>
+  StudyBalance v3 — Desarrollado por Grupo 2 TDFI101 · UNAB · 2026
+</footer>
+
 <script>
 /* ============================================================================
-   MOTOR DE CALENDARIZACIÓN (idéntico al original — abreviado en comentarios)
+   MOTOR DE CALENDARIZACIÓN
    ========================================================================= */
 const DIAS_SEMANA = ['Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado', 'Domingo'];
 
@@ -498,7 +529,7 @@ function generarOpcionPomodoro(bloques, asign, minTot) {
   const { eventosAutocuidado, bloquesRestantes } = reservarAutocuidado(bloques);
   const { calendario, resumenPendientes } = asignarSesionesPomodoro(bloquesRestantes, objetivo);
   const s = formatearCalendarioParaUI(calendario, eventosAutocuidado, 'Opción 2: Distribución Fragmentada Pomodoro');
-  s.descripcion = 'Ciclos de 25 min de estudio + 5 min de pausa, con pausa larga de 20 min cada 4 ciclos. Ideal para mantener el enfoque sin saturarse.';
+  s.descripcion = 'Ciclos de 25 min de estudio + 5 min de pausa, con pausa larga de 20 min cada 4 ciclos.';
   s.resumenPendientes = resumenPendientes;
   return s;
 }
@@ -531,7 +562,6 @@ function generarRutinasDeEstudio(inputData) {
   const op2 = generarOpcionPomodoro(clonar(bloques), asignaturas, minTot);
   const op3 = generarOpcionBalanceFinDeSemana(clonar(bloques), asignaturas, minTot);
 
-  // NUEVO: enriquecer con métodos sugeridos
   op1.metodosSugeridos = sugerirMetodos(op1, asignaturas);
   op2.metodosSugeridos = sugerirMetodos(op2, asignaturas);
   op3.metodosSugeridos = sugerirMetodos(op3, asignaturas);
@@ -556,8 +586,8 @@ const CATALOGO_METODOS = {
     descripcion:'Ciclos de 25 min de foco profundo + 5 min de pausa. Cada 4 ciclos, pausa larga de 20 min.',
     tips:[
       'Silencia notificaciones del celular antes de iniciar el primer pomodoro.',
-      'Anota en una hoja las distracciones que aparezcan; no las resuelvas, las atiendes en la pausa.',
-      'Usa la pausa de 5 min para levantarte, estirar o tomar agua — NUNCA para redes sociales.',
+      'Anota las distracciones que aparezcan; no las resuelvas, las atiendes en la pausa.',
+      'Usa la pausa de 5 min para estirar o tomar agua — NUNCA para redes sociales.',
       'Si terminas la tarea antes del pomodoro, revisa lo aprendido hasta que suene el timer.',
     ]},
   FEYNMAN: { id:'feynman', nombre:'Técnica Feynman', icono:'🧠',
@@ -587,7 +617,7 @@ const CATALOGO_METODOS = {
   CORNELL: { id:'cornell', nombre:'Método Cornell', icono:'📝',
     descripcion:'Divide la hoja en 3 zonas: notas, palabras clave y resumen. Ideal para procesar clases recién recibidas.',
     tips:[
-      'Estructura la hoja: columna izquierda (preguntas), derecha (detalle), abajo (resumen 3 líneas).',
+      'Estructura la hoja: izquierda (preguntas), derecha (detalle), abajo (resumen 3 líneas).',
       'Llena el resumen en las primeras 24h después de la clase — ahí se consolida la memoria.',
       'Las palabras clave de la izquierda son tus futuros prompts de auto-evaluación.',
     ]},
@@ -628,7 +658,7 @@ function sugerirMetodos(opcion, asignaturas) {
 }
 
 /* ============================================================================
-   VISTA GRID (CUADRÍCULA)
+   VISTA GRID
    ========================================================================= */
 const GRID_HORA_INICIO = 7;
 const GRID_HORA_FIN = 23;
@@ -646,15 +676,13 @@ function renderGrid(opcion) {
 
   const header = document.createElement('div');
   header.className = 'sb-grid-header';
-  header.innerHTML = `<div class="sb-grid-corner"></div>` +
-    DIAS_SEMANA.map(d => `<div class="sb-grid-dia">${d}</div>`).join('');
+  header.innerHTML = `<div></div>` + DIAS_SEMANA.map(d => `<div class="sb-grid-dia">${d}</div>`).join('');
   wrap.appendChild(header);
 
   const grid = document.createElement('div');
   grid.className = 'sb-grid';
   grid.style.gridTemplateRows = `repeat(${GRID_TOTAL_SLOTS}, 28px)`;
 
-  // Columna de horas
   for (let h = GRID_HORA_INICIO; h < GRID_HORA_FIN; h++) {
     const c = document.createElement('div');
     c.className = 'sb-grid-hora';
@@ -663,8 +691,6 @@ function renderGrid(opcion) {
     c.textContent = `${String(h).padStart(2,'0')}:00`;
     grid.appendChild(c);
   }
-
-  // Celdas vacías (guía visual)
   DIAS_SEMANA.forEach((dia, col) => {
     for (let s = 0; s < GRID_TOTAL_SLOTS; s++) {
       const c = document.createElement('div');
@@ -674,8 +700,6 @@ function renderGrid(opcion) {
       grid.appendChild(c);
     }
   });
-
-  // Eventos
   DIAS_SEMANA.forEach((dia, col) => {
     (opcion.dias[dia] || []).forEach(ev => {
       const slotI = minutosASlot(ev.inicioMin);
@@ -698,7 +722,6 @@ function renderGrid(opcion) {
       grid.appendChild(bloque);
     });
   });
-
   wrap.appendChild(grid);
   return wrap.outerHTML;
 }
@@ -724,13 +747,13 @@ function renderMetodos(metodos) {
   if (!metodos || metodos.length === 0) return '';
   return `
     <div class="card" style="margin-top:1rem;">
-      <h2>💡 Métodos de estudio recomendados para esta rutina</h2>
-      <p class="descripcion">El sistema analizó tus bloques de estudio y la dificultad de tus ramos para sugerirte los métodos con mejor ajuste.</p>
+      <h2>💡 Métodos de estudio recomendados</h2>
+      <p class="descripcion">Análisis basado en la densidad de tus bloques y la dificultad de tus ramos.</p>
       <div class="sb-metodos">
         ${metodos.map(m => `
-          <article class="sb-metodo" tabindex="0" aria-label="Método ${m.nombre}">
+          <article class="sb-metodo" tabindex="0">
             <header>
-              <span class="sb-metodo__icono" aria-hidden="true">${m.icono}</span>
+              <span class="sb-metodo__icono">${m.icono}</span>
               <h4>${m.nombre}</h4>
               <span class="sb-metodo__score">${Math.round(m.score * 100)}% match</span>
             </header>
@@ -760,7 +783,7 @@ function renderLeyenda() {
   return `
     <div class="sb-leyenda" aria-label="Leyenda de colores">
       <span><span class="swatch" style="background:var(--sb-estudio-bg)"></span>Estudio</span>
-      <span><span class="swatch" style="background:var(--sb-estudio-fuerte-bg)"></span>Estudio (dificultad alta)</span>
+      <span><span class="swatch" style="background:var(--sb-estudio-fuerte-bg)"></span>Dificultad alta</span>
       <span><span class="swatch" style="background:var(--sb-pausa-bg)"></span>Pausa</span>
       <span><span class="swatch" style="background:var(--sb-autocuidado-bg)"></span>Autocuidado</span>
     </div>
@@ -768,7 +791,7 @@ function renderLeyenda() {
 }
 
 /* ============================================================================
-   FORMULARIO Y ORQUESTACIÓN
+   FORMULARIO
    ========================================================================= */
 function agregarOcupacion(valores) {
   const cont = document.getElementById('ocupaciones-container');
@@ -817,8 +840,209 @@ function leerAsignaturas() {
   })).filter(r => r.nombre.length > 0);
 }
 
+/* ============================================================================
+   IMPORTAR DESDE EXCEL/CSV
+   ========================================================================= */
+function importarArchivo(event) {
+  const file = event.target.files[0];
+  if (!file) return;
+  const feedback = document.getElementById('import-feedback');
+  feedback.innerHTML = '';
+  const ext = file.name.split('.').pop().toLowerCase();
+
+  if (ext === 'csv') {
+    Papa.parse(file, {
+      header: true, skipEmptyLines: true,
+      complete: (res) => procesarFilasImportadas(res.data, feedback),
+      error: (e) => { feedback.innerHTML = `<div class="error-box">⚠️ Error CSV: ${e.message}</div>`; },
+    });
+  } else if (ext === 'xlsx' || ext === 'xls') {
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      try {
+        const wb = XLSX.read(e.target.result, { type: 'array' });
+        const sheet = wb.Sheets[wb.SheetNames[0]];
+        const filas = XLSX.utils.sheet_to_json(sheet);
+        procesarFilasImportadas(filas, feedback);
+      } catch (err) {
+        feedback.innerHTML = `<div class="error-box">⚠️ Error Excel: ${err.message}</div>`;
+      }
+    };
+    reader.readAsArrayBuffer(file);
+  } else {
+    feedback.innerHTML = `<div class="error-box">⚠️ Formato no soportado. Usa CSV, XLSX o XLS.</div>`;
+  }
+  event.target.value = '';
+}
+
+function procesarFilasImportadas(filas, feedback) {
+  if (!filas.length) { feedback.innerHTML = `<div class="error-box">⚠️ Archivo vacío.</div>`; return; }
+  // Normaliza nombres de columnas (acentos / mayúsculas)
+  const norm = (s) => String(s || '').toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,'').trim();
+  const ocupaciones = [];
+  let importadas = 0;
+  filas.forEach(f => {
+    const obj = {};
+    Object.keys(f).forEach(k => obj[norm(k)] = f[k]);
+    const dia = String(obj.dia || '').trim();
+    const inicio = String(obj.inicio || '').trim();
+    const fin = String(obj.fin || '').trim();
+    const etiqueta = String(obj.etiqueta || obj.actividad || 'Clase').trim();
+    const diaCap = DIAS_SEMANA.find(d => norm(d) === norm(dia));
+    if (diaCap && /^\d{1,2}:\d{2}$/.test(inicio) && /^\d{1,2}:\d{2}$/.test(fin)) {
+      ocupaciones.push({ dia: diaCap, inicio: inicio.padStart(5,'0'), fin: fin.padStart(5,'0'), etiqueta });
+      importadas++;
+    }
+  });
+  if (importadas === 0) {
+    feedback.innerHTML = `<div class="error-box">⚠️ No se pudo importar ninguna fila. Verifica columnas: <code>dia, inicio, fin, etiqueta</code></div>`;
+    return;
+  }
+  document.getElementById('ocupaciones-container').innerHTML = '';
+  ocupaciones.forEach(o => agregarOcupacion(o));
+  feedback.innerHTML = `<div class="success-box">✅ Importadas ${importadas} ocupaciones desde el archivo.</div>`;
+}
+
+/* ============================================================================
+   FAVORITOS (localStorage)
+   ========================================================================= */
+const STORAGE_KEY = 'studybalance_favoritos_v3';
+
+function obtenerFavoritos() {
+  try { return JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}'); }
+  catch { return {}; }
+}
+function refrescarSelectorFavoritos() {
+  const sel = document.getElementById('favoritos-select');
+  const favs = obtenerFavoritos();
+  sel.innerHTML = '<option value="">— Cargar favorito —</option>' +
+    Object.keys(favs).map(k => `<option value="${k}">${k}</option>`).join('');
+}
+function guardarFavorito() {
+  const nombre = prompt('Nombre del favorito:', `Rutina ${new Date().toLocaleDateString()}`);
+  if (!nombre) return;
+  const favs = obtenerFavoritos();
+  favs[nombre] = {
+    ocupaciones: leerOcupaciones(),
+    asignaturas: leerAsignaturas(),
+    guardadoEn: new Date().toISOString(),
+  };
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(favs));
+  refrescarSelectorFavoritos();
+  alert(`✅ Favorito "${nombre}" guardado.`);
+}
+function cargarFavorito() {
+  const nombre = document.getElementById('favoritos-select').value;
+  if (!nombre) { alert('Selecciona un favorito.'); return; }
+  const favs = obtenerFavoritos();
+  const fav = favs[nombre];
+  if (!fav) return;
+  document.getElementById('ocupaciones-container').innerHTML = '';
+  document.getElementById('ramos-container').innerHTML = '';
+  fav.ocupaciones.forEach(o => agregarOcupacion(o));
+  fav.asignaturas.forEach(r => agregarRamo(r));
+  document.getElementById('import-feedback').innerHTML =
+    `<div class="success-box">✅ Favorito "${nombre}" cargado.</div>`;
+}
+function eliminarFavorito() {
+  const nombre = document.getElementById('favoritos-select').value;
+  if (!nombre) { alert('Selecciona un favorito.'); return; }
+  if (!confirm(`¿Eliminar "${nombre}"?`)) return;
+  const favs = obtenerFavoritos();
+  delete favs[nombre];
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(favs));
+  refrescarSelectorFavoritos();
+}
+
+/* ============================================================================
+   EXPORTAR (PDF / JSON)
+   ========================================================================= */
+function exportarPDF(idxOpcion) {
+  if (!RESULTADO_ACTUAL) return;
+  const op = RESULTADO_ACTUAL.opciones[idxOpcion];
+  const { jsPDF } = window.jspdf;
+  const doc = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
+
+  doc.setFontSize(16);
+  doc.setTextColor(67, 56, 202);
+  doc.text('StudyBalance — Rutina de Estudio', 14, 18);
+  doc.setFontSize(10);
+  doc.setTextColor(60, 60, 60);
+  doc.text(op.estrategia, 14, 25);
+  doc.setFontSize(9);
+  const lineas = doc.splitTextToSize(op.descripcion, 180);
+  doc.text(lineas, 14, 31);
+  doc.text(`Total semanal: ${op.resumen.horasEstudioTotales}h de estudio`, 14, 31 + lineas.length * 4 + 4);
+
+  let cursorY = 31 + lineas.length * 4 + 12;
+
+  DIAS_SEMANA.forEach(dia => {
+    const evs = op.dias[dia] || [];
+    if (!evs.length) return;
+    const rows = evs.map(ev => [ev.bloqueHorario, ev.actividad, ev.detalle]);
+    doc.autoTable({
+      startY: cursorY,
+      head: [[`${dia}`, 'Actividad', 'Detalle']],
+      body: rows,
+      theme: 'striped',
+      headStyles: { fillColor: [67, 56, 202], textColor: 255, fontSize: 9 },
+      bodyStyles: { fontSize: 8 },
+      columnStyles: { 0: { cellWidth: 35 }, 1: { cellWidth: 70 } },
+      margin: { left: 14, right: 14 },
+    });
+    cursorY = doc.lastAutoTable.finalY + 5;
+    if (cursorY > 260) { doc.addPage(); cursorY = 20; }
+  });
+
+  // Métodos
+  if (op.metodosSugeridos && op.metodosSugeridos.length) {
+    if (cursorY > 230) { doc.addPage(); cursorY = 20; }
+    doc.setFontSize(12);
+    doc.setTextColor(67, 56, 202);
+    doc.text('Métodos de estudio recomendados', 14, cursorY);
+    cursorY += 6;
+    op.metodosSugeridos.forEach(m => {
+      doc.setFontSize(10);
+      doc.setTextColor(30, 30, 30);
+      doc.text(`${m.icono} ${m.nombre} (${Math.round(m.score*100)}% match)`, 14, cursorY);
+      cursorY += 5;
+      doc.setFontSize(8);
+      doc.setTextColor(80, 80, 80);
+      const r = doc.splitTextToSize(`Por qué: ${m.razon}`, 180);
+      doc.text(r, 14, cursorY); cursorY += r.length * 3.5 + 2;
+      m.tips.forEach(t => {
+        const tt = doc.splitTextToSize(`• ${t}`, 175);
+        doc.text(tt, 18, cursorY); cursorY += tt.length * 3.5;
+      });
+      cursorY += 3;
+      if (cursorY > 270) { doc.addPage(); cursorY = 20; }
+    });
+  }
+
+  doc.setFontSize(7);
+  doc.setTextColor(120, 120, 120);
+  doc.text(`Generado por StudyBalance v3 — ${new Date().toLocaleString()}`, 14, 290);
+  doc.save(`StudyBalance_${op.estrategia.split(':')[0].replace(/\s+/g,'_')}.pdf`);
+}
+
+function exportarJSON(idxOpcion) {
+  if (!RESULTADO_ACTUAL) return;
+  const op = RESULTADO_ACTUAL.opciones[idxOpcion];
+  const data = JSON.stringify({ metadata: RESULTADO_ACTUAL.metadata, opcion: op }, null, 2);
+  const blob = new Blob([data], { type: 'application/json' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `StudyBalance_${op.estrategia.split(':')[0].replace(/\s+/g,'_')}.json`;
+  a.click();
+  URL.revokeObjectURL(url);
+}
+
+/* ============================================================================
+   ORQUESTACIÓN
+   ========================================================================= */
 let RESULTADO_ACTUAL = null;
-let VISTAS_POR_OPCION = {}; // { 0:'grid', 1:'lista', ... }
+let VISTAS_POR_OPCION = {};
 
 function ejecutarMotor() {
   const errCont = document.getElementById('error-container');
@@ -843,7 +1067,7 @@ function pintarResultados(resultado) {
   const contenido = document.getElementById('contenido-opciones');
 
   tabsCont.innerHTML = resultado.opciones.map((op, i) =>
-    `<button class="tab-btn ${i===0?'active':''}" data-idx="${i}" onclick="cambiarTab(${i})" type="button">
+    `<button class="tab-btn ${i===0?'active':''}" onclick="cambiarTab(${i})" type="button">
       ${op.estrategia.split(':')[0]}
     </button>`
   ).join('');
@@ -852,20 +1076,23 @@ function pintarResultados(resultado) {
     <div class="tab-pane ${i===0?'':'hidden'}" id="pane-${i}">
       <div class="card">
         <p class="descripcion"><strong>${op.estrategia}</strong><br>${op.descripcion}</p>
-        <span class="resumen-pill">Total semanal: ${op.resumen.horasEstudioTotales}h de estudio</span>
+        <span class="resumen-pill">Total semanal: ${op.resumen.horasEstudioTotales}h</span>
         <span class="resumen-pill">${Object.values(op.dias).flat().filter(e=>e.tipo==='estudio').length} sesiones</span>
-        ${op.resumenPendientes.length ? `<p class="pendiente-warning">⚠️ No se alcanzó a asignar todo el tiempo objetivo de: ${op.resumenPendientes.map(p => `${p.nombre} (${p.minutosNoAsignados} min)`).join(', ')}</p>` : ''}
+        ${op.resumenPendientes.length ? `<p class="pendiente-warning">⚠️ Tiempo no asignado: ${op.resumenPendientes.map(p => `${p.nombre} (${p.minutosNoAsignados} min)`).join(', ')}</p>` : ''}
 
-        <div class="view-toggle" role="tablist" aria-label="Cambiar vista">
-          <button class="${VISTAS_POR_OPCION[i]==='grid'?'active':''}" onclick="cambiarVista(${i},'grid')" type="button">🧱 Vista Grid</button>
-          <button class="${VISTAS_POR_OPCION[i]==='lista'?'active':''}" onclick="cambiarVista(${i},'lista')" type="button">📋 Vista Lista</button>
+        <div class="toolbar-row">
+          <div class="view-toggle" role="tablist">
+            <button class="${VISTAS_POR_OPCION[i]==='grid'?'active':''}" onclick="cambiarVista(${i},'grid')" type="button">🧱 Grid</button>
+            <button class="${VISTAS_POR_OPCION[i]==='lista'?'active':''}" onclick="cambiarVista(${i},'lista')" type="button">📋 Lista</button>
+          </div>
+          <button class="btn btn-secondary btn-sm" onclick="exportarPDF(${i})" type="button">📄 Exportar PDF</button>
+          <button class="btn btn-secondary btn-sm" onclick="exportarJSON(${i})" type="button">💾 Exportar JSON</button>
+          <button class="btn btn-secondary btn-sm" onclick="guardarFavorito()" type="button">⭐ Guardar como favorito</button>
         </div>
 
         ${renderLeyenda()}
         <div id="vista-${i}">
-          ${VISTAS_POR_OPCION[i]==='grid'
-            ? renderGrid(op)
-            : DIAS_SEMANA.map(d => renderListaDia(d, op.dias[d])).join('') }
+          ${VISTAS_POR_OPCION[i]==='grid' ? renderGrid(op) : DIAS_SEMANA.map(d => renderListaDia(d, op.dias[d])).join('') }
         </div>
       </div>
 
@@ -873,7 +1100,6 @@ function pintarResultados(resultado) {
     </div>
   `).join('') + renderTipsUniversales();
 
-  // Aplicar clase a vistas lista
   setTimeout(() => {
     document.querySelectorAll('[id^="vista-"]').forEach(el => {
       const idx = +el.id.replace('vista-','');
@@ -910,7 +1136,10 @@ window.addEventListener('DOMContentLoaded', () => {
   agregarRamo({ nombre:'Física I',     dificultad:4 });
   agregarRamo({ nombre:'Programación', dificultad:2 });
   agregarRamo({ nombre:'Estadística',  dificultad:3 });
+
+  refrescarSelectorFavoritos();
 });
 </script>
 </body>
 </html>
+
