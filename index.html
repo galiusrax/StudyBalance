@@ -3,9 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>StudyBalance v3 — Motor de Calendarización Inteligente</title>
+<title>StudyBalance v3.1 — Motor de Calendarización Inteligente</title>
 
-<!-- Librerías para exportar PDF e importar Excel/CSV (CDN, requieren Internet la 1ra vez) -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
@@ -145,7 +144,6 @@
   .pendiente-warning { color: var(--sb-warning-text); font-size: 0.85rem; margin-top: 0.5rem; }
   .hidden { display: none; }
 
-  /* Lista */
   .lista-vista table { width: 100%; border-collapse: collapse; font-size: 0.85rem; }
   .lista-vista th {
     background: var(--sb-surface-2); text-align: left; padding: 0.6rem;
@@ -157,7 +155,6 @@
   .lista-vista tr.autocuidado td { color: var(--sb-autocuidado-bg); }
   .dia-titulo { font-weight: 700; margin: 1rem 0 0.4rem; color: var(--sb-text); font-size: 0.95rem; }
 
-  /* Grid */
   .sb-grid-wrapper {
     background: var(--sb-surface); border-radius: 14px; padding: 1rem;
     overflow-x: auto; border: 1px solid var(--sb-border);
@@ -179,20 +176,28 @@
     font-size: 0.7rem; padding: 2px 6px;
     display: flex; align-items: flex-start; justify-content: flex-end;
   }
-  .sb-grid-slot { background: var(--sb-surface-2); opacity: 0.5; }
+  .sb-grid-slot { background: var(--sb-surface-2); opacity: 0.5; transition: background 0.15s; }
   .sb-grid-slot.borde-hora { border-top: 1px solid var(--sb-border); }
+  .sb-grid-slot.drop-target { background: var(--sb-accent); opacity: 0.7; }
+  .sb-grid-slot.drop-invalid { background: #ef4444; opacity: 0.6; }
+
   .sb-bloque {
     border-radius: 6px; padding: 4px 6px; margin: 1px;
     color: var(--sb-text-on-color); font-size: 0.72rem;
-    cursor: pointer; overflow: hidden;
+    cursor: grab; overflow: hidden;
     box-shadow: inset 0 -2px 0 rgba(0,0,0,0.18);
-    transition: transform 0.15s, box-shadow 0.15s; z-index: 1;
+    transition: transform 0.15s, box-shadow 0.15s, opacity 0.15s; z-index: 1;
+    user-select: none;
   }
   .sb-bloque:hover { transform: scale(1.03); box-shadow: 0 4px 12px rgba(0,0,0,0.35); z-index: 2; }
+  .sb-bloque:active { cursor: grabbing; }
+  .sb-bloque.dragging { opacity: 0.4; }
+  .sb-bloque--fijo { cursor: not-allowed !important; opacity: 0.85; }
   .sb-bloque--estudio      { background: var(--sb-estudio-bg); }
   .sb-bloque--estudio.dif-alta { background: var(--sb-estudio-fuerte-bg); color: #fff; }
   .sb-bloque--pausa        { background: var(--sb-pausa-bg); }
   .sb-bloque--autocuidado  { background: var(--sb-autocuidado-bg); }
+  .sb-bloque--clase        { background: var(--sb-clase-bg); color: #fff; }
   .sb-bloque__titulo  { font-weight: 700; line-height: 1.2; }
   .sb-bloque__hora    { font-size: 0.68rem; opacity: 0.9; margin-top: 1px; }
   .sb-bloque__detalle { font-size: 0.68rem; margin-top: 2px; opacity: 0.9; }
@@ -201,7 +206,12 @@
   .sb-leyenda span { display: inline-flex; align-items: center; gap: 0.3rem; color: var(--sb-text); }
   .sb-leyenda .swatch { width: 14px; height: 14px; border-radius: 4px; display: inline-block; }
 
-  /* Métodos */
+  .drag-hint {
+    font-size: 0.78rem; color: var(--sb-text-muted); margin: 0.4rem 0;
+    padding: 0.4rem 0.7rem; background: var(--sb-surface-2);
+    border-left: 3px solid var(--sb-accent); border-radius: 6px;
+  }
+
   .sb-metodos { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1rem; margin-top: 1rem; }
   .sb-metodo { background: var(--sb-surface-2); border: 1px solid var(--sb-border); border-radius: 12px; padding: 1rem; }
   .sb-metodo header { display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.5rem; }
@@ -250,16 +260,21 @@
 <body>
 
 <header class="app-header">
-  <h1>🌱 StudyBalance v3 — Motor de Calendarización</h1>
+  <h1>🌱 StudyBalance v3.1 — Motor de Calendarización</h1>
   <p>Proyecto TDFI101 · Grupo 2 · UNAB Sede Antonio Varas · ODS 3: Salud y Bienestar</p>
 </header>
 
 <main>
 
-  <!-- IMPORTAR / FAVORITOS -->
   <div class="card">
     <h2>📥 Importar horario o cargar favorito</h2>
-    <p class="descripcion">Importa tu horario desde Excel/CSV (columnas: <code>dia, inicio, fin, etiqueta</code>) o carga una rutina guardada previamente.</p>
+    <p class="descripcion">
+      Importa tu horario desde Excel/CSV. Columnas reconocidas para clases:
+      <code>dia, inicio, fin, etiqueta</code>. <strong>Nuevo:</strong> también puedes
+      incluir columnas <code>asignatura, dificultad</code> (en la misma hoja o en una
+      hoja extra llamada <em>Asignaturas</em> / <em>Ramos</em>) y se cargarán
+      automáticamente en la planilla de dificultad.
+    </p>
     <div class="favoritos-row">
       <label class="file-label" for="file-import">📄 Importar Excel/CSV</label>
       <input type="file" id="file-import" accept=".csv,.xlsx,.xls" onchange="importarArchivo(event)">
@@ -301,7 +316,7 @@
 </main>
 
 <footer>
-  StudyBalance v3 — Desarrollado por Grupo 2 TDFI101 · UNAB · 2026
+  StudyBalance v3.1 — Desarrollado por Grupo 2 TDFI101 · UNAB · 2026
 </footer>
 
 <script>
@@ -309,6 +324,7 @@
    MOTOR DE CALENDARIZACIÓN
    ========================================================================= */
 const DIAS_SEMANA = ['Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado', 'Domingo'];
+const DIAS_FIN_SEMANA = ['Sábado', 'Domingo'];
 
 const REGLAS_NEUROCIENCIA = {
   DURACION_MAX_SESION_CONTINUA: 90,
@@ -325,6 +341,10 @@ const REGLAS_NEUROCIENCIA = {
   MIN_BLOQUE_AUTOCUIDADO_DIARIO: 30,
   MAX_MINUTOS_ESTUDIO_POR_DIA: 240,
   MAX_MINUTOS_ESTUDIO_POR_SEMANA: 1200,
+  // ⭐ NUEVO: realismo horario
+  HORA_INICIO_FIN_DE_SEMANA: 10 * 60,   // sábado y domingo arrancan a las 10:00
+  HORA_INICIO_DIA_SEMANA: 7 * 60,       // entre semana arranca a las 07:00
+  PENALIZACION_MADRUGAR_FINDE: 22 * 60, // bloques en finde antes de las 11 reciben menos calidad
 };
 
 function horaAMinutos(hhmm) { const [h, m] = hhmm.split(':').map(Number); return h * 60 + m; }
@@ -350,12 +370,18 @@ function calcularBloquesLibresDelDia(ocupacionesDelDia, horaInicioDia, horaFinDi
   return libres.filter(b => b.fin - b.inicio >= 10);
 }
 
-function calcularBloquesLibres(ocupaciones, horaInicioDia = '07:00', horaFinDia = '23:00') {
-  const iMin = horaAMinutos(horaInicioDia), fMin = horaAMinutos(horaFinDia);
+function calcularBloquesLibres(ocupaciones, horaFinDia = '23:00') {
+  const fMin = horaAMinutos(horaFinDia);
   const mapa = new Map(DIAS_SEMANA.map(d => [d, []]));
   ocupaciones.forEach(o => { if (mapa.has(o.dia)) mapa.get(o.dia).push(o); });
   const r = {};
-  for (const d of DIAS_SEMANA) r[d] = calcularBloquesLibresDelDia(mapa.get(d), iMin, fMin);
+  for (const d of DIAS_SEMANA) {
+    // ⭐ Fines de semana arrancan a las 10:00 (nada de estudiar a las 7am sábado)
+    const iMin = DIAS_FIN_SEMANA.includes(d)
+      ? REGLAS_NEUROCIENCIA.HORA_INICIO_FIN_DE_SEMANA
+      : REGLAS_NEUROCIENCIA.HORA_INICIO_DIA_SEMANA;
+    r[d] = calcularBloquesLibresDelDia(mapa.get(d), iMin, fMin);
+  }
   return r;
 }
 
@@ -371,9 +397,13 @@ function calcularMinutosObjetivoPorAsignatura(asignaturas, minutosTot, { pesoFn 
   return objetivo.sort((a,b) => b.dificultad - a.dificultad);
 }
 
-function calidadHoraria(b) {
+function calidadHoraria(b, dia) {
   const R = REGLAS_NEUROCIENCIA;
-  if (dentroDeVentana(b.inicio, b.fin, R.HORA_INICIO_VENTANA_OPTIMA, R.HORA_FIN_VENTANA_OPTIMA)) return 3;
+  const esFinde = DIAS_FIN_SEMANA.includes(dia);
+  // ⭐ Penalización: en finde, antes de las 11 baja la calidad
+  if (esFinde && b.inicio < R.PENALIZACION_MADRUGAR_FINDE) return 1;
+  if (dentroDeVentana(b.inicio, b.fin, R.HORA_INICIO_VENTANA_OPTIMA, R.HORA_FIN_VENTANA_OPTIMA))
+    return esFinde ? 2 : 3;
   if (dentroDeVentana(b.inicio, b.fin, R.HORA_INICIO_VENTANA_TARDE, R.HORA_FIN_VENTANA_TARDE)) return 2;
   if (b.inicio >= R.HORA_LIMITE_NOCTURNA) return 0;
   return 1;
@@ -382,7 +412,7 @@ function calidadHoraria(b) {
 function listarYOrdenarBloquesPorCalidad(bloquesPorDia) {
   const lista = [];
   for (const d of DIAS_SEMANA)
-    for (const b of bloquesPorDia[d]) lista.push({ dia: d, ...b, calidad: calidadHoraria(b) });
+    for (const b of bloquesPorDia[d]) lista.push({ dia: d, ...b, calidad: calidadHoraria(b, d) });
   return lista.sort((a,b) => (b.calidad - a.calidad) || ((b.fin-b.inicio) - (a.fin-a.inicio)));
 }
 
@@ -486,13 +516,18 @@ function asignarSesionesPomodoro(bloquesPorDia, asignaturasObj) {
   return { calendario, resumenPendientes };
 }
 
-function formatearCalendarioParaUI(calendario, eventosAutocuidado, nombreEstrategia) {
+function formatearCalendarioParaUI(calendario, eventosAutocuidado, ocupacionesFijas, nombreEstrategia) {
   const dias = {};
   for (const dia of DIAS_SEMANA) {
     const evs = [...calendario[dia]];
     eventosAutocuidado.filter(e => e.dia === dia).forEach(a => evs.push({
       tipo:'autocuidado', etiqueta:'Autocuidado / Descanso', inicio:a.inicio, fin:a.fin, duracion:a.fin-a.inicio, dia
     }));
+    // ⭐ Las ocupaciones fijas (clases) también aparecen en grid pero NO son movibles
+    ocupacionesFijas.filter(o => o.dia === dia).forEach(o => {
+      const iMin = horaAMinutos(o.inicio), fMin = horaAMinutos(o.fin);
+      evs.push({ tipo:'clase', etiqueta:o.etiqueta, inicio:iMin, fin:fMin, duracion:fMin-iMin, dia });
+    });
     evs.sort((a,b) => a.inicio - b.inicio);
     dias[dia] = evs.map(ev => ({
       bloqueHorario: `${minutosAHora(ev.inicio)} - ${minutosAHora(ev.fin)}`,
@@ -500,8 +535,10 @@ function formatearCalendarioParaUI(calendario, eventosAutocuidado, nombreEstrate
       tipo: ev.tipo,
       actividad: ev.tipo === 'estudio' ? ev.asignatura : (ev.etiqueta || 'Pausa'),
       dificultad: ev.dificultad || null,
-      detalle: ev.tipo === 'estudio' ? `Dificultad ${ev.dificultad} · ${ev.duracion} min` : `${ev.duracion} min`,
+      detalle: ev.tipo === 'estudio' ? `Dificultad ${ev.dificultad} · ${ev.duracion} min` :
+               ev.tipo === 'clase'   ? 'Clase fija' : `${ev.duracion} min`,
       duracionMin: ev.duracion,
+      movible: ev.tipo === 'estudio' || ev.tipo === 'pausa' || ev.tipo === 'autocuidado',
     }));
   }
   const minTot = Object.values(calendario).flat().filter(e => e.tipo === 'estudio').reduce((a,e) => a+e.duracion, 0);
@@ -512,55 +549,55 @@ function formatearCalendarioParaUI(calendario, eventosAutocuidado, nombreEstrate
   };
 }
 
-function generarOpcionEnfoqueIntensivo(bloques, asign, minTot) {
+function generarOpcionEnfoqueIntensivo(bloques, asign, ocup, minTot) {
   const objetivo = calcularMinutosObjetivoPorAsignatura(asign, minTot, { pesoFn: a => a.dificultad ** 1.5, minimoPorRamo: 45 });
   const { eventosAutocuidado, bloquesRestantes } = reservarAutocuidado(bloques);
   const { calendario, resumenPendientes } = asignarSesiones(bloquesRestantes, objetivo, {
     duracionSesion: REGLAS_NEUROCIENCIA.DURACION_MAX_SESION_CONTINUA,
     duracionPausa: REGLAS_NEUROCIENCIA.PAUSA_ACTIVA_OBLIGATORIA,
   });
-  const s = formatearCalendarioParaUI(calendario, eventosAutocuidado, 'Opción 1: Enfoque Intensivo por Bloques');
+  const s = formatearCalendarioParaUI(calendario, eventosAutocuidado, ocup, 'Opción 1: Enfoque Intensivo por Bloques');
   s.descripcion = 'Sesiones largas (hasta 90 min) en los bloques de mejor calidad horaria, con fuerte prioridad para las asignaturas más difíciles.';
   s.resumenPendientes = resumenPendientes;
   return s;
 }
-function generarOpcionPomodoro(bloques, asign, minTot) {
+function generarOpcionPomodoro(bloques, asign, ocup, minTot) {
   const objetivo = calcularMinutosObjetivoPorAsignatura(asign, minTot, { pesoFn: a => a.dificultad, minimoPorRamo: 50 });
   const { eventosAutocuidado, bloquesRestantes } = reservarAutocuidado(bloques);
   const { calendario, resumenPendientes } = asignarSesionesPomodoro(bloquesRestantes, objetivo);
-  const s = formatearCalendarioParaUI(calendario, eventosAutocuidado, 'Opción 2: Distribución Fragmentada Pomodoro');
+  const s = formatearCalendarioParaUI(calendario, eventosAutocuidado, ocup, 'Opción 2: Distribución Fragmentada Pomodoro');
   s.descripcion = 'Ciclos de 25 min de estudio + 5 min de pausa, con pausa larga de 20 min cada 4 ciclos.';
   s.resumenPendientes = resumenPendientes;
   return s;
 }
-function generarOpcionBalanceFinDeSemana(bloques, asign, minTot) {
+function generarOpcionBalanceFinDeSemana(bloques, asign, ocup, minTot) {
   const objetivo = calcularMinutosObjetivoPorAsignatura(asign, minTot, { pesoFn: a => a.dificultad, minimoPorRamo: 40 });
   const { eventosAutocuidado, bloquesRestantes } = reservarAutocuidado(bloques);
   const { calendario, resumenPendientes } = asignarSesiones(bloquesRestantes, objetivo, {
     duracionSesion: 60, duracionPausa: REGLAS_NEUROCIENCIA.PAUSA_ACTIVA_OBLIGATORIA,
   });
-  const s = formatearCalendarioParaUI(calendario, eventosAutocuidado, 'Opción 3: Balance Equilibrado de Fin de Semana');
-  s.descripcion = 'Sesiones más cortas (máx. 60 min) repartidas a lo largo de toda la semana, incluyendo sábado y domingo en dosis bajas.';
+  const s = formatearCalendarioParaUI(calendario, eventosAutocuidado, ocup, 'Opción 3: Balance Equilibrado de Fin de Semana');
+  s.descripcion = 'Sesiones más cortas (máx. 60 min) repartidas a lo largo de toda la semana, incluyendo sábado y domingo (a partir de las 10:00) en dosis bajas.';
   s.resumenPendientes = resumenPendientes;
   return s;
 }
 
 function generarRutinasDeEstudio(inputData) {
-  const { ocupaciones = [], asignaturas = [], disponibilidad = null, horaInicioDia = '07:00', horaFinDia = '23:00' } = inputData;
+  const { ocupaciones = [], asignaturas = [], disponibilidad = null, horaFinDia = '23:00' } = inputData;
   if (!asignaturas.length) throw new Error('Se requiere al menos una asignatura con su dificultad percibida.');
   let bloques;
   if (disponibilidad && disponibilidad.length) {
     bloques = Object.fromEntries(DIAS_SEMANA.map(d => [d, []]));
     disponibilidad.forEach(b => { if (bloques[b.dia]) bloques[b.dia].push({ inicio: horaAMinutos(b.inicio), fin: horaAMinutos(b.fin) }); });
   } else {
-    bloques = calcularBloquesLibres(ocupaciones, horaInicioDia, horaFinDia);
+    bloques = calcularBloquesLibres(ocupaciones, horaFinDia);
   }
   const minTot = Object.values(bloques).flat().reduce((a,b) => a + (b.fin-b.inicio), 0);
   if (minTot === 0) throw new Error('No se detectaron bloques de tiempo libre con la información entregada.');
   const clonar = o => JSON.parse(JSON.stringify(o));
-  const op1 = generarOpcionEnfoqueIntensivo(clonar(bloques), asignaturas, minTot);
-  const op2 = generarOpcionPomodoro(clonar(bloques), asignaturas, minTot);
-  const op3 = generarOpcionBalanceFinDeSemana(clonar(bloques), asignaturas, minTot);
+  const op1 = generarOpcionEnfoqueIntensivo(clonar(bloques), asignaturas, ocupaciones, minTot);
+  const op2 = generarOpcionPomodoro(clonar(bloques), asignaturas, ocupaciones, minTot);
+  const op3 = generarOpcionBalanceFinDeSemana(clonar(bloques), asignaturas, ocupaciones, minTot);
 
   op1.metodosSugeridos = sugerirMetodos(op1, asignaturas);
   op2.metodosSugeridos = sugerirMetodos(op2, asignaturas);
@@ -658,7 +695,7 @@ function sugerirMetodos(opcion, asignaturas) {
 }
 
 /* ============================================================================
-   VISTA GRID
+   VISTA GRID  +  DRAG & DROP
    ========================================================================= */
 const GRID_HORA_INICIO = 7;
 const GRID_HORA_FIN = 23;
@@ -669,10 +706,14 @@ const GRID_TOTAL_SLOTS = (GRID_HORA_FIN - GRID_HORA_INICIO) * GRID_SLOTS_POR_HOR
 function minutosASlot(minutos) {
   return Math.max(0, Math.round((minutos - GRID_HORA_INICIO * 60) / GRID_SLOT_MIN));
 }
+function slotAMinutos(slot) {
+  return GRID_HORA_INICIO * 60 + slot * GRID_SLOT_MIN;
+}
 
-function renderGrid(opcion) {
+function renderGrid(opcion, idxOpcion) {
   const wrap = document.createElement('div');
   wrap.className = 'sb-grid-wrapper';
+  wrap.dataset.opcion = idxOpcion;
 
   const header = document.createElement('div');
   header.className = 'sb-grid-header';
@@ -697,23 +738,32 @@ function renderGrid(opcion) {
       c.className = `sb-grid-slot ${s % GRID_SLOTS_POR_HORA === 0 ? 'borde-hora' : ''}`;
       c.style.gridColumn = `${col + 2}`;
       c.style.gridRow = `${s + 1}`;
+      c.dataset.dia = dia;
+      c.dataset.slot = s;
       grid.appendChild(c);
     }
   });
   DIAS_SEMANA.forEach((dia, col) => {
-    (opcion.dias[dia] || []).forEach(ev => {
+    (opcion.dias[dia] || []).forEach((ev, evIdx) => {
       const slotI = minutosASlot(ev.inicioMin);
       const slotF = minutosASlot(ev.finMin);
       const span = Math.max(1, slotF - slotI);
       const difAlta = ev.tipo === 'estudio' && ev.dificultad >= 4 ? 'dif-alta' : '';
+      const fijoCls = !ev.movible ? 'sb-bloque--fijo' : '';
       const bloque = document.createElement('div');
-      bloque.className = `sb-bloque sb-bloque--${ev.tipo} ${difAlta}`;
+      bloque.className = `sb-bloque sb-bloque--${ev.tipo} ${difAlta} ${fijoCls}`;
       bloque.style.gridColumn = `${col + 2}`;
       bloque.style.gridRow = `${slotI + 1} / span ${span}`;
       bloque.setAttribute('role','button');
       bloque.setAttribute('tabindex','0');
       bloque.setAttribute('aria-label', `${ev.actividad}, ${ev.bloqueHorario}, ${ev.detalle}`);
-      bloque.title = `${ev.actividad}\n${ev.bloqueHorario}\n${ev.detalle}`;
+      bloque.title = ev.movible
+        ? `${ev.actividad}\n${ev.bloqueHorario}\n${ev.detalle}\n\n🖱️ Arrastrar para mover`
+        : `${ev.actividad}\n${ev.bloqueHorario}\n${ev.detalle}\n\n🔒 Bloque fijo`;
+      bloque.draggable = !!ev.movible;
+      bloque.dataset.opcion = idxOpcion;
+      bloque.dataset.dia = dia;
+      bloque.dataset.idx = evIdx;
       bloque.innerHTML = `
         <div class="sb-bloque__titulo">${ev.actividad}</div>
         <div class="sb-bloque__hora">${ev.bloqueHorario}</div>
@@ -723,7 +773,114 @@ function renderGrid(opcion) {
     });
   });
   wrap.appendChild(grid);
-  return wrap.outerHTML;
+  return wrap;
+}
+
+/* ---- Drag & Drop ---- */
+let DRAG_STATE = null;
+
+function configurarDragDrop(contenedor) {
+  contenedor.querySelectorAll('.sb-bloque[draggable="true"]').forEach(b => {
+    b.addEventListener('dragstart', onDragStart);
+    b.addEventListener('dragend', onDragEnd);
+  });
+  contenedor.querySelectorAll('.sb-grid-slot').forEach(s => {
+    s.addEventListener('dragover', onDragOver);
+    s.addEventListener('dragleave', onDragLeave);
+    s.addEventListener('drop', onDrop);
+  });
+}
+
+function onDragStart(e) {
+  DRAG_STATE = {
+    opcion: +this.dataset.opcion,
+    dia: this.dataset.dia,
+    idx: +this.dataset.idx,
+  };
+  this.classList.add('dragging');
+  e.dataTransfer.effectAllowed = 'move';
+  try { e.dataTransfer.setData('text/plain', 'mover'); } catch(_) {}
+}
+function onDragEnd() {
+  this.classList.remove('dragging');
+  document.querySelectorAll('.sb-grid-slot').forEach(s => s.classList.remove('drop-target','drop-invalid'));
+  DRAG_STATE = null;
+}
+function onDragOver(e) {
+  if (!DRAG_STATE) return;
+  e.preventDefault();
+  e.dataTransfer.dropEffect = 'move';
+  const ok = validarDrop(this.dataset.dia, +this.dataset.slot);
+  this.classList.remove('drop-target','drop-invalid');
+  this.classList.add(ok ? 'drop-target' : 'drop-invalid');
+}
+function onDragLeave() {
+  this.classList.remove('drop-target','drop-invalid');
+}
+function onDrop(e) {
+  if (!DRAG_STATE) return;
+  e.preventDefault();
+  const nuevoDia = this.dataset.dia;
+  const nuevoSlot = +this.dataset.slot;
+  if (!validarDrop(nuevoDia, nuevoSlot)) {
+    mostrarToast('⚠️ No se puede soltar ahí (hay solape o se sale del horario).');
+    return;
+  }
+  moverBloque(DRAG_STATE.opcion, DRAG_STATE.dia, DRAG_STATE.idx, nuevoDia, nuevoSlot);
+}
+
+function validarDrop(nuevoDia, nuevoSlot) {
+  if (!DRAG_STATE || !RESULTADO_ACTUAL) return false;
+  const op = RESULTADO_ACTUAL.opciones[DRAG_STATE.opcion];
+  const ev = op.dias[DRAG_STATE.dia][DRAG_STATE.idx];
+  if (!ev) return false;
+  const dur = ev.duracionMin;
+  const nuevoInicio = slotAMinutos(nuevoSlot);
+  const nuevoFin = nuevoInicio + dur;
+  if (nuevoFin > GRID_HORA_FIN * 60) return false;
+  // Revisar solape con TODOS los eventos del nuevo día (excepto el propio si es mismo día)
+  const eventosDia = op.dias[nuevoDia] || [];
+  return !eventosDia.some((otro, i) => {
+    if (nuevoDia === DRAG_STATE.dia && i === DRAG_STATE.idx) return false;
+    return nuevoInicio < otro.finMin && nuevoFin > otro.inicioMin;
+  });
+}
+
+function moverBloque(idxOpcion, viejoDia, viejoIdx, nuevoDia, nuevoSlot) {
+  const op = RESULTADO_ACTUAL.opciones[idxOpcion];
+  const ev = op.dias[viejoDia][viejoIdx];
+  if (!ev) return;
+  const dur = ev.duracionMin;
+  const nuevoInicio = slotAMinutos(nuevoSlot);
+  const nuevoFin = nuevoInicio + dur;
+  const evMovido = {
+    ...ev,
+    inicioMin: nuevoInicio,
+    finMin: nuevoFin,
+    bloqueHorario: `${minutosAHora(nuevoInicio)} - ${minutosAHora(nuevoFin)}`,
+  };
+  op.dias[viejoDia].splice(viejoIdx, 1);
+  op.dias[nuevoDia].push(evMovido);
+  op.dias[nuevoDia].sort((a,b) => a.inicioMin - b.inicioMin);
+  pintarResultados(RESULTADO_ACTUAL);
+  cambiarTab(idxOpcion);
+  mostrarToast(`✅ Movido a ${nuevoDia} ${minutosAHora(nuevoInicio)}`);
+}
+
+function mostrarToast(msg) {
+  let t = document.getElementById('sb-toast');
+  if (!t) {
+    t = document.createElement('div');
+    t.id = 'sb-toast';
+    t.style.cssText = `position:fixed;bottom:20px;left:50%;transform:translateX(-50%);
+      background:var(--sb-surface);color:var(--sb-text);padding:0.7rem 1.2rem;border-radius:10px;
+      border:1px solid var(--sb-border);box-shadow:0 4px 12px rgba(0,0,0,0.3);z-index:9999;
+      font-size:0.9rem;font-weight:600;transition:opacity 0.3s;`;
+    document.body.appendChild(t);
+  }
+  t.textContent = msg; t.style.opacity = '1';
+  clearTimeout(t._timer);
+  t._timer = setTimeout(() => { t.style.opacity = '0'; }, 2200);
 }
 
 function renderListaDia(dia, eventos) {
@@ -786,6 +943,7 @@ function renderLeyenda() {
       <span><span class="swatch" style="background:var(--sb-estudio-fuerte-bg)"></span>Dificultad alta</span>
       <span><span class="swatch" style="background:var(--sb-pausa-bg)"></span>Pausa</span>
       <span><span class="swatch" style="background:var(--sb-autocuidado-bg)"></span>Autocuidado</span>
+      <span><span class="swatch" style="background:var(--sb-clase-bg)"></span>Clase fija</span>
     </div>
   `;
 }
@@ -841,8 +999,10 @@ function leerAsignaturas() {
 }
 
 /* ============================================================================
-   IMPORTAR DESDE EXCEL/CSV
+   IMPORTAR DESDE EXCEL/CSV   (con auto-detección de dificultad)
    ========================================================================= */
+const norm = (s) => String(s || '').toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,'').trim();
+
 function importarArchivo(event) {
   const file = event.target.files[0];
   if (!file) return;
@@ -853,7 +1013,7 @@ function importarArchivo(event) {
   if (ext === 'csv') {
     Papa.parse(file, {
       header: true, skipEmptyLines: true,
-      complete: (res) => procesarFilasImportadas(res.data, feedback),
+      complete: (res) => procesarFilasImportadas({ ocupaciones: res.data, asignaturas: res.data }, feedback),
       error: (e) => { feedback.innerHTML = `<div class="error-box">⚠️ Error CSV: ${e.message}</div>`; },
     });
   } else if (ext === 'xlsx' || ext === 'xls') {
@@ -861,9 +1021,19 @@ function importarArchivo(event) {
     reader.onload = (e) => {
       try {
         const wb = XLSX.read(e.target.result, { type: 'array' });
-        const sheet = wb.Sheets[wb.SheetNames[0]];
-        const filas = XLSX.utils.sheet_to_json(sheet);
-        procesarFilasImportadas(filas, feedback);
+        // ⭐ Detectar hoja específica de asignaturas/ramos
+        let filasOcup = [];
+        let filasAsig = [];
+        const nombresHojas = wb.SheetNames.map(n => ({ orig:n, norm:norm(n) }));
+        const hojaAsigObj = nombresHojas.find(h => /asignatur|ramo|dificultad|materia/.test(h.norm));
+        const hojaPrincipal = wb.SheetNames[0];
+        filasOcup = XLSX.utils.sheet_to_json(wb.Sheets[hojaPrincipal]);
+        if (hojaAsigObj && hojaAsigObj.orig !== hojaPrincipal) {
+          filasAsig = XLSX.utils.sheet_to_json(wb.Sheets[hojaAsigObj.orig]);
+        } else {
+          filasAsig = filasOcup; // mismas filas pueden traer columnas extra
+        }
+        procesarFilasImportadas({ ocupaciones: filasOcup, asignaturas: filasAsig }, feedback);
       } catch (err) {
         feedback.innerHTML = `<div class="error-box">⚠️ Error Excel: ${err.message}</div>`;
       }
@@ -875,32 +1045,70 @@ function importarArchivo(event) {
   event.target.value = '';
 }
 
-function procesarFilasImportadas(filas, feedback) {
-  if (!filas.length) { feedback.innerHTML = `<div class="error-box">⚠️ Archivo vacío.</div>`; return; }
-  // Normaliza nombres de columnas (acentos / mayúsculas)
-  const norm = (s) => String(s || '').toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,'').trim();
+function procesarFilasImportadas({ ocupaciones: filasOcup, asignaturas: filasAsig }, feedback) {
+  if (!filasOcup.length && !filasAsig.length) {
+    feedback.innerHTML = `<div class="error-box">⚠️ Archivo vacío.</div>`; return;
+  }
+
+  // ----- 1) OCUPACIONES (clases / hábitos fijos) -----
   const ocupaciones = [];
-  let importadas = 0;
-  filas.forEach(f => {
+  filasOcup.forEach(f => {
     const obj = {};
     Object.keys(f).forEach(k => obj[norm(k)] = f[k]);
-    const dia = String(obj.dia || '').trim();
-    const inicio = String(obj.inicio || '').trim();
-    const fin = String(obj.fin || '').trim();
-    const etiqueta = String(obj.etiqueta || obj.actividad || 'Clase').trim();
+    const dia = String(obj.dia || obj['día'] || '').trim();
+    const inicio = String(obj.inicio || obj.desde || obj['hora inicio'] || '').trim();
+    const fin = String(obj.fin || obj.hasta || obj['hora fin'] || '').trim();
+    const etiqueta = String(obj.etiqueta || obj.actividad || obj.clase || obj.asignatura || 'Clase').trim();
     const diaCap = DIAS_SEMANA.find(d => norm(d) === norm(dia));
     if (diaCap && /^\d{1,2}:\d{2}$/.test(inicio) && /^\d{1,2}:\d{2}$/.test(fin)) {
       ocupaciones.push({ dia: diaCap, inicio: inicio.padStart(5,'0'), fin: fin.padStart(5,'0'), etiqueta });
-      importadas++;
     }
   });
-  if (importadas === 0) {
-    feedback.innerHTML = `<div class="error-box">⚠️ No se pudo importar ninguna fila. Verifica columnas: <code>dia, inicio, fin, etiqueta</code></div>`;
+
+  // ----- 2) ASIGNATURAS + DIFICULTAD (deduplicadas) -----
+  const mapaAsig = new Map();
+  filasAsig.forEach(f => {
+    const obj = {};
+    Object.keys(f).forEach(k => obj[norm(k)] = f[k]);
+    const nombre = String(obj.asignatura || obj.ramo || obj.materia || obj.clase || obj.etiqueta || '').trim();
+    const difRaw = obj.dificultad ?? obj.dif ?? obj.nivel;
+    const dif = parseInt(difRaw, 10);
+    if (nombre && !isNaN(dif) && dif >= 1 && dif <= 5) {
+      // si el mismo nombre aparece varias veces, nos quedamos con la dificultad máxima
+      const prev = mapaAsig.get(nombre.toLowerCase());
+      if (!prev || dif > prev.dificultad) mapaAsig.set(nombre.toLowerCase(), { nombre, dificultad: dif });
+    }
+  });
+  // Si no había columna dificultad, intentar inferir asignaturas únicas desde las etiquetas de clase
+  if (mapaAsig.size === 0) {
+    const blacklist = /almuerzo|descanso|cena|gimnasio|trabajo|deporte|reunion|reunión|despertar|dormir/i;
+    ocupaciones.forEach(o => {
+      if (!blacklist.test(o.etiqueta) && o.etiqueta.toLowerCase() !== 'clase') {
+        const k = o.etiqueta.toLowerCase();
+        if (!mapaAsig.has(k)) mapaAsig.set(k, { nombre: o.etiqueta, dificultad: 3 });
+      }
+    });
+  }
+
+  // ----- 3) APLICAR AL FORMULARIO -----
+  if (ocupaciones.length === 0 && mapaAsig.size === 0) {
+    feedback.innerHTML = `<div class="error-box">⚠️ No se pudo importar nada. Verifica columnas: <code>dia, inicio, fin, etiqueta</code> y/o <code>asignatura, dificultad</code>.</div>`;
     return;
   }
-  document.getElementById('ocupaciones-container').innerHTML = '';
-  ocupaciones.forEach(o => agregarOcupacion(o));
-  feedback.innerHTML = `<div class="success-box">✅ Importadas ${importadas} ocupaciones desde el archivo.</div>`;
+
+  if (ocupaciones.length > 0) {
+    document.getElementById('ocupaciones-container').innerHTML = '';
+    ocupaciones.forEach(o => agregarOcupacion(o));
+  }
+  if (mapaAsig.size > 0) {
+    document.getElementById('ramos-container').innerHTML = '';
+    [...mapaAsig.values()].forEach(a => agregarRamo(a));
+  }
+
+  const partes = [];
+  if (ocupaciones.length) partes.push(`${ocupaciones.length} ocupaciones`);
+  if (mapaAsig.size) partes.push(`${mapaAsig.size} asignaturas con dificultad`);
+  feedback.innerHTML = `<div class="success-box">✅ Importadas ${partes.join(' y ')}.</div>`;
 }
 
 /* ============================================================================
@@ -994,7 +1202,6 @@ function exportarPDF(idxOpcion) {
     if (cursorY > 260) { doc.addPage(); cursorY = 20; }
   });
 
-  // Métodos
   if (op.metodosSugeridos && op.metodosSugeridos.length) {
     if (cursorY > 230) { doc.addPage(); cursorY = 20; }
     doc.setFontSize(12);
@@ -1021,7 +1228,7 @@ function exportarPDF(idxOpcion) {
 
   doc.setFontSize(7);
   doc.setTextColor(120, 120, 120);
-  doc.text(`Generado por StudyBalance v3 — ${new Date().toLocaleString()}`, 14, 290);
+  doc.text(`Generado por StudyBalance v3.1 — ${new Date().toLocaleString()}`, 14, 290);
   doc.save(`StudyBalance_${op.estrategia.split(':')[0].replace(/\s+/g,'_')}.pdf`);
 }
 
@@ -1090,56 +1297,6 @@ function pintarResultados(resultado) {
           <button class="btn btn-secondary btn-sm" onclick="guardarFavorito()" type="button">⭐ Guardar como favorito</button>
         </div>
 
-        ${renderLeyenda()}
-        <div id="vista-${i}">
-          ${VISTAS_POR_OPCION[i]==='grid' ? renderGrid(op) : DIAS_SEMANA.map(d => renderListaDia(d, op.dias[d])).join('') }
-        </div>
-      </div>
+        ${VISTAS_POR_OPCION[i]==='grid' ? `<div class="drag-hint">🖱️ <strong>Tip:</strong> arrastra cualquier bloque de estudio/pausa/autocuidado a otro día u hora. Las clases fijas no son movibles.</div>` : ''}
 
-      ${renderMetodos(op.metodosSugeridos)}
-    </div>
-  `).join('') + renderTipsUniversales();
-
-  setTimeout(() => {
-    document.querySelectorAll('[id^="vista-"]').forEach(el => {
-      const idx = +el.id.replace('vista-','');
-      el.className = VISTAS_POR_OPCION[idx] === 'lista' ? 'lista-vista' : '';
-    });
-  }, 0);
-
-  document.getElementById('resultados').classList.remove('hidden');
-}
-
-function cambiarTab(idx) {
-  document.querySelectorAll('.tab-btn').forEach((b,i) => b.classList.toggle('active', i===idx));
-  document.querySelectorAll('.tab-pane').forEach((p,i) => p.classList.toggle('hidden', i!==idx));
-}
-
-function cambiarVista(idx, modo) {
-  VISTAS_POR_OPCION[idx] = modo;
-  pintarResultados(RESULTADO_ACTUAL);
-  cambiarTab(idx);
-}
-
-/* ============================================================================
-   PRECARGA DE EJEMPLO
-   ========================================================================= */
-window.addEventListener('DOMContentLoaded', () => {
-  agregarOcupacion({ dia:'Lunes',     inicio:'08:30', fin:'10:00', etiqueta:'Cálculo I' });
-  agregarOcupacion({ dia:'Lunes',     inicio:'13:00', fin:'14:00', etiqueta:'Almuerzo' });
-  agregarOcupacion({ dia:'Martes',    inicio:'09:00', fin:'11:00', etiqueta:'Programación' });
-  agregarOcupacion({ dia:'Miércoles', inicio:'08:30', fin:'10:00', etiqueta:'Cálculo I' });
-  agregarOcupacion({ dia:'Jueves',    inicio:'11:00', fin:'13:00', etiqueta:'Física I' });
-  agregarOcupacion({ dia:'Viernes',   inicio:'08:30', fin:'10:00', etiqueta:'Estadística' });
-
-  agregarRamo({ nombre:'Cálculo I',    dificultad:5 });
-  agregarRamo({ nombre:'Física I',     dificultad:4 });
-  agregarRamo({ nombre:'Programación', dificultad:2 });
-  agregarRamo({ nombre:'Estadística',  dificultad:3 });
-
-  refrescarSelectorFavoritos();
-});
-</script>
-</body>
-</html>
-
+        ${renderL
