@@ -12,249 +12,112 @@
 
 <style>
   :root {
-    --sb-bg:            #0f172a;
-    --sb-surface:       #1e293b;
-    --sb-surface-2:     #334155;
-    --sb-border:        #475569;
-    --sb-text:          #f1f5f9;
-    --sb-text-muted:    #cbd5e1;
-    --sb-text-on-color: #0f172a;
-    --sb-estudio-bg:        #38bdf8;
-    --sb-estudio-fuerte-bg: #fb7185;
-    --sb-pausa-bg:          #4ade80;
-    --sb-autocuidado-bg:    #fbbf24;
-    --sb-clase-bg:          #a78bfa;
-    --sb-accent:        #6366f1;
-    --sb-accent-hover:  #818cf8;
-    --sb-focus-ring:    #fde047;
-    --sb-danger-bg:     #450a0a;
-    --sb-danger-text:   #fecaca;
-    --sb-warning-text:  #fcd34d;
-    --sb-success-bg:    #064e3b;
-    --sb-success-text:  #a7f3d0;
+    --sb-bg:#0f172a; --sb-surface:#1e293b; --sb-surface-2:#334155; --sb-border:#475569;
+    --sb-text:#f1f5f9; --sb-text-muted:#cbd5e1; --sb-text-on-color:#0f172a;
+    --sb-estudio-bg:#38bdf8; --sb-estudio-fuerte-bg:#fb7185;
+    --sb-pausa-bg:#4ade80; --sb-autocuidado-bg:#fbbf24; --sb-clase-bg:#a78bfa;
+    --sb-accent:#6366f1; --sb-accent-hover:#818cf8; --sb-focus-ring:#fde047;
+    --sb-danger-bg:#450a0a; --sb-danger-text:#fecaca;
+    --sb-warning-text:#fcd34d; --sb-success-bg:#064e3b; --sb-success-text:#a7f3d0;
   }
   @media (prefers-color-scheme: light) {
     :root {
-      --sb-bg:            #f8fafc;
-      --sb-surface:       #ffffff;
-      --sb-surface-2:     #f1f5f9;
-      --sb-border:        #cbd5e1;
-      --sb-text:          #0f172a;
-      --sb-text-muted:    #475569;
-      --sb-estudio-bg:        #0369a1;
-      --sb-estudio-fuerte-bg: #be123c;
-      --sb-pausa-bg:          #15803d;
-      --sb-autocuidado-bg:    #b45309;
-      --sb-clase-bg:          #6d28d9;
-      --sb-text-on-color:     #ffffff;
-      --sb-danger-bg:     #fef2f2;
-      --sb-danger-text:   #991b1b;
-      --sb-warning-text:  #92400e;
-      --sb-success-bg:    #ecfdf5;
-      --sb-success-text:  #065f46;
+      --sb-bg:#f8fafc; --sb-surface:#ffffff; --sb-surface-2:#f1f5f9; --sb-border:#cbd5e1;
+      --sb-text:#0f172a; --sb-text-muted:#475569;
+      --sb-estudio-bg:#0369a1; --sb-estudio-fuerte-bg:#be123c;
+      --sb-pausa-bg:#15803d; --sb-autocuidado-bg:#b45309; --sb-clase-bg:#6d28d9;
+      --sb-text-on-color:#ffffff;
+      --sb-danger-bg:#fef2f2; --sb-danger-text:#991b1b;
+      --sb-warning-text:#92400e; --sb-success-bg:#ecfdf5; --sb-success-text:#065f46;
     }
   }
-
-  * { box-sizing: border-box; }
-  body {
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    background: var(--sb-bg); color: var(--sb-text);
-    margin: 0; padding: 0;
-  }
-  header.app-header {
-    background: linear-gradient(135deg, #4338ca, #6366f1);
-    color: white; padding: 1.2rem 2rem;
-  }
-  header.app-header h1 { margin: 0; font-size: 1.5rem; }
-  header.app-header p { margin: 0.3rem 0 0; font-size: 0.85rem; opacity: 0.95; }
-  main { max-width: 1200px; margin: 0 auto; padding: 1.5rem; }
-
-  .card {
-    background: var(--sb-surface); border-radius: 14px; padding: 1.5rem;
-    box-shadow: 0 1px 3px rgba(0,0,0,0.15);
-    margin-bottom: 1.5rem; border: 1px solid var(--sb-border);
-  }
-  .card h2 { margin-top: 0; font-size: 1.1rem; color: var(--sb-text); }
-  .descripcion { color: var(--sb-text-muted); font-size: 0.85rem; margin-bottom: 1rem; }
-
-  .ramo-row { display: flex; gap: 0.6rem; margin-bottom: 0.6rem; align-items: center; }
-  .ramo-row input, .ramo-row select {
-    padding: 0.5rem; border: 1px solid var(--sb-border); border-radius: 8px;
-    font-size: 0.9rem; background: var(--sb-surface-2); color: var(--sb-text);
-  }
-  .ramo-row input { flex: 1; }
-  .ramo-row button.remove,
-  .ocupacion-row button.remove {
-    background: none; border: none; cursor: pointer; color: #ef4444; font-size: 1rem;
-  }
-  .ocupacion-row {
-    display: grid; grid-template-columns: 1fr 90px 90px 1fr auto;
-    gap: 0.5rem; margin-bottom: 0.5rem; align-items: center;
-  }
-  .ocupacion-row select, .ocupacion-row input {
-    padding: 0.45rem; border: 1px solid var(--sb-border); border-radius: 8px;
-    font-size: 0.85rem; background: var(--sb-surface-2); color: var(--sb-text);
-  }
-
-  .btn {
-    background: var(--sb-accent); color: white; border: none;
-    padding: 0.7rem 1.2rem; border-radius: 10px; font-size: 0.95rem;
-    cursor: pointer; font-weight: 600;
-  }
-  .btn:hover { background: var(--sb-accent-hover); }
-  .btn-secondary { background: var(--sb-surface-2); color: var(--sb-text); }
-  .btn-secondary:hover { background: var(--sb-border); }
-  .btn-sm { padding: 0.4rem 0.8rem; font-size: 0.85rem; }
-
-  .toolbar-row { display: flex; flex-wrap: wrap; gap: 0.5rem; align-items: center; margin-top: 0.8rem; }
-
-  .tabs { display: flex; gap: 0.5rem; border-bottom: 2px solid var(--sb-border); margin-bottom: 1rem; flex-wrap: wrap; }
-  .tab-btn {
-    background: none; border: none; padding: 0.6rem 1rem; cursor: pointer;
-    font-size: 0.9rem; color: var(--sb-text-muted); border-bottom: 3px solid transparent;
-    font-weight: 600;
-  }
-  .tab-btn.active { color: var(--sb-accent); border-bottom-color: var(--sb-accent); }
-
-  .view-toggle {
-    display: inline-flex; gap: 0.3rem; background: var(--sb-surface-2);
-    padding: 0.25rem; border-radius: 10px; margin-bottom: 1rem;
-  }
-  .view-toggle button {
-    background: none; border: none; padding: 0.4rem 0.9rem; border-radius: 8px;
-    cursor: pointer; color: var(--sb-text-muted); font-weight: 600; font-size: 0.85rem;
-  }
-  .view-toggle button.active { background: var(--sb-accent); color: white; }
-
-  .resumen-pill {
-    display: inline-block; background: var(--sb-surface-2); color: var(--sb-text);
-    padding: 0.3rem 0.7rem; border-radius: 20px; font-size: 0.8rem;
-    font-weight: 600; margin: 0 0.4rem 0.6rem 0; border: 1px solid var(--sb-border);
-  }
-
-  .error-box {
-    background: var(--sb-danger-bg); color: var(--sb-danger-text);
-    border: 1px solid #b91c1c; padding: 0.8rem; border-radius: 10px; font-size: 0.85rem;
-  }
-  .success-box {
-    background: var(--sb-success-bg); color: var(--sb-success-text);
-    border: 1px solid #10b981; padding: 0.8rem; border-radius: 10px; font-size: 0.85rem;
-    margin-bottom: 1rem;
-  }
-  .pendiente-warning { color: var(--sb-warning-text); font-size: 0.85rem; margin-top: 0.5rem; }
-  .hidden { display: none; }
-
-  .lista-vista table { width: 100%; border-collapse: collapse; font-size: 0.85rem; }
-  .lista-vista th {
-    background: var(--sb-surface-2); text-align: left; padding: 0.6rem;
-    color: var(--sb-text); font-size: 0.75rem; text-transform: uppercase;
-  }
-  .lista-vista td { padding: 0.55rem 0.6rem; border-bottom: 1px solid var(--sb-border); color: var(--sb-text); }
-  .lista-vista tr.estudio td:nth-child(2) { font-weight: 600; }
-  .lista-vista tr.pausa td { color: var(--sb-pausa-bg); }
-  .lista-vista tr.autocuidado td { color: var(--sb-autocuidado-bg); }
-  .dia-titulo { font-weight: 700; margin: 1rem 0 0.4rem; color: var(--sb-text); font-size: 0.95rem; }
-
-  .sb-grid-wrapper {
-    background: var(--sb-surface); border-radius: 14px; padding: 1rem;
-    overflow-x: auto; border: 1px solid var(--sb-border);
-  }
-  .sb-grid-header {
-    display: grid; grid-template-columns: 60px repeat(7, minmax(110px, 1fr));
-    gap: 2px; margin-bottom: 4px;
-  }
-  .sb-grid-dia {
-    text-align: center; font-weight: 700; padding: 0.5rem;
-    color: var(--sb-text); border-bottom: 2px solid var(--sb-border); font-size: 0.85rem;
-  }
-  .sb-grid {
-    display: grid; grid-template-columns: 60px repeat(7, minmax(110px, 1fr));
-    gap: 1px; background: var(--sb-border); position: relative;
-  }
-  .sb-grid-hora {
-    background: var(--sb-surface); color: var(--sb-text-muted);
-    font-size: 0.7rem; padding: 2px 6px;
-    display: flex; align-items: flex-start; justify-content: flex-end;
-  }
-  .sb-grid-slot { background: var(--sb-surface-2); opacity: 0.5; transition: background 0.15s; }
-  .sb-grid-slot.borde-hora { border-top: 1px solid var(--sb-border); }
-  .sb-grid-slot.drop-target { background: var(--sb-accent); opacity: 0.7; }
-  .sb-grid-slot.drop-invalid { background: #ef4444; opacity: 0.6; }
-
-  .sb-bloque {
-    border-radius: 6px; padding: 4px 6px; margin: 1px;
-    color: var(--sb-text-on-color); font-size: 0.72rem;
-    cursor: grab; overflow: hidden;
-    box-shadow: inset 0 -2px 0 rgba(0,0,0,0.18);
-    transition: transform 0.15s, box-shadow 0.15s, opacity 0.15s; z-index: 1;
-    user-select: none;
-  }
-  .sb-bloque:hover { transform: scale(1.03); box-shadow: 0 4px 12px rgba(0,0,0,0.35); z-index: 2; }
-  .sb-bloque:active { cursor: grabbing; }
-  .sb-bloque.dragging { opacity: 0.4; }
-  .sb-bloque--fijo { cursor: not-allowed !important; opacity: 0.85; }
-  .sb-bloque--estudio      { background: var(--sb-estudio-bg); }
-  .sb-bloque--estudio.dif-alta { background: var(--sb-estudio-fuerte-bg); color: #fff; }
-  .sb-bloque--pausa        { background: var(--sb-pausa-bg); }
-  .sb-bloque--autocuidado  { background: var(--sb-autocuidado-bg); }
-  .sb-bloque--clase        { background: var(--sb-clase-bg); color: #fff; }
-  .sb-bloque__titulo  { font-weight: 700; line-height: 1.2; }
-  .sb-bloque__hora    { font-size: 0.68rem; opacity: 0.9; margin-top: 1px; }
-  .sb-bloque__detalle { font-size: 0.68rem; margin-top: 2px; opacity: 0.9; }
-
-  .sb-leyenda { display: flex; gap: 1rem; flex-wrap: wrap; margin: 0.8rem 0; font-size: 0.8rem; }
-  .sb-leyenda span { display: inline-flex; align-items: center; gap: 0.3rem; color: var(--sb-text); }
-  .sb-leyenda .swatch { width: 14px; height: 14px; border-radius: 4px; display: inline-block; }
-
-  .drag-hint {
-    font-size: 0.78rem; color: var(--sb-text-muted); margin: 0.4rem 0;
-    padding: 0.4rem 0.7rem; background: var(--sb-surface-2);
-    border-left: 3px solid var(--sb-accent); border-radius: 6px;
-  }
-
-  .sb-metodos { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1rem; margin-top: 1rem; }
-  .sb-metodo { background: var(--sb-surface-2); border: 1px solid var(--sb-border); border-radius: 12px; padding: 1rem; }
-  .sb-metodo header { display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.5rem; }
-  .sb-metodo h4 { margin: 0; flex: 1; font-size: 1rem; color: var(--sb-text); }
-  .sb-metodo__icono { font-size: 1.5rem; }
-  .sb-metodo__score {
-    background: var(--sb-accent); color: white;
-    padding: 0.15rem 0.5rem; border-radius: 12px; font-size: 0.7rem; font-weight: 700;
-  }
-  .sb-metodo__razon {
-    background: var(--sb-surface); padding: 0.5rem 0.7rem; border-radius: 8px;
-    font-size: 0.8rem; color: var(--sb-text); border-left: 3px solid var(--sb-accent);
-    margin: 0.5rem 0;
-  }
-  .sb-metodo p { color: var(--sb-text-muted); font-size: 0.85rem; margin: 0.5rem 0; }
-  .sb-metodo details summary { cursor: pointer; font-weight: 600; color: var(--sb-accent); font-size: 0.85rem; margin-top: 0.5rem; }
-  .sb-metodo ul { margin: 0.5rem 0 0; padding-left: 1.2rem; color: var(--sb-text); font-size: 0.85rem; }
-  .sb-metodo ul li { margin-bottom: 0.4rem; }
-
-  .sb-tips-card { background: var(--sb-surface); border-left: 4px solid var(--sb-autocuidado-bg); }
-  .sb-tips-card ul { padding-left: 1.2rem; color: var(--sb-text); }
-  .sb-tips-card ul li { margin-bottom: 0.5rem; font-size: 0.88rem; }
-
-  .favoritos-row { display: flex; gap: 0.5rem; align-items: center; flex-wrap: wrap; }
-  .favoritos-row select, .favoritos-row input {
-    padding: 0.45rem; border: 1px solid var(--sb-border); border-radius: 8px;
-    font-size: 0.85rem; background: var(--sb-surface-2); color: var(--sb-text);
-  }
-  .file-label {
-    display: inline-block; background: var(--sb-surface-2); color: var(--sb-text);
-    padding: 0.5rem 0.9rem; border-radius: 10px; cursor: pointer; font-size: 0.85rem;
-    border: 1px solid var(--sb-border); font-weight: 600;
-  }
-  .file-label:hover { background: var(--sb-border); }
-  input[type="file"] { display: none; }
-
-  *:focus-visible { outline: 3px solid var(--sb-focus-ring); outline-offset: 2px; border-radius: 4px; }
-  @media (prefers-reduced-motion: reduce) { .sb-bloque { transition: none; } }
-
-  footer {
-    text-align: center; padding: 1.5rem; color: var(--sb-text-muted);
-    font-size: 0.8rem; border-top: 1px solid var(--sb-border); margin-top: 2rem;
-  }
+  *{box-sizing:border-box;}
+  body{font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif;background:var(--sb-bg);color:var(--sb-text);margin:0;padding:0;}
+  header.app-header{background:linear-gradient(135deg,#4338ca,#6366f1);color:white;padding:1.2rem 2rem;}
+  header.app-header h1{margin:0;font-size:1.5rem;}
+  header.app-header p{margin:.3rem 0 0;font-size:.85rem;opacity:.95;}
+  main{max-width:1200px;margin:0 auto;padding:1.5rem;}
+  .card{background:var(--sb-surface);border-radius:14px;padding:1.5rem;box-shadow:0 1px 3px rgba(0,0,0,.15);margin-bottom:1.5rem;border:1px solid var(--sb-border);}
+  .card h2{margin-top:0;font-size:1.1rem;color:var(--sb-text);}
+  .descripcion{color:var(--sb-text-muted);font-size:.85rem;margin-bottom:1rem;}
+  .ramo-row{display:flex;gap:.6rem;margin-bottom:.6rem;align-items:center;}
+  .ramo-row input,.ramo-row select{padding:.5rem;border:1px solid var(--sb-border);border-radius:8px;font-size:.9rem;background:var(--sb-surface-2);color:var(--sb-text);}
+  .ramo-row input{flex:1;}
+  .ramo-row button.remove,.ocupacion-row button.remove{background:none;border:none;cursor:pointer;color:#ef4444;font-size:1rem;}
+  .ocupacion-row{display:grid;grid-template-columns:1fr 90px 90px 1fr auto;gap:.5rem;margin-bottom:.5rem;align-items:center;}
+  .ocupacion-row select,.ocupacion-row input{padding:.45rem;border:1px solid var(--sb-border);border-radius:8px;font-size:.85rem;background:var(--sb-surface-2);color:var(--sb-text);}
+  .btn{background:var(--sb-accent);color:white;border:none;padding:.7rem 1.2rem;border-radius:10px;font-size:.95rem;cursor:pointer;font-weight:600;}
+  .btn:hover{background:var(--sb-accent-hover);}
+  .btn-secondary{background:var(--sb-surface-2);color:var(--sb-text);}
+  .btn-secondary:hover{background:var(--sb-border);}
+  .btn-sm{padding:.4rem .8rem;font-size:.85rem;}
+  .toolbar-row{display:flex;flex-wrap:wrap;gap:.5rem;align-items:center;margin-top:.8rem;}
+  .tabs{display:flex;gap:.5rem;border-bottom:2px solid var(--sb-border);margin-bottom:1rem;flex-wrap:wrap;}
+  .tab-btn{background:none;border:none;padding:.6rem 1rem;cursor:pointer;font-size:.9rem;color:var(--sb-text-muted);border-bottom:3px solid transparent;font-weight:600;}
+  .tab-btn.active{color:var(--sb-accent);border-bottom-color:var(--sb-accent);}
+  .view-toggle{display:inline-flex;gap:.3rem;background:var(--sb-surface-2);padding:.25rem;border-radius:10px;margin-bottom:1rem;}
+  .view-toggle button{background:none;border:none;padding:.4rem .9rem;border-radius:8px;cursor:pointer;color:var(--sb-text-muted);font-weight:600;font-size:.85rem;}
+  .view-toggle button.active{background:var(--sb-accent);color:white;}
+  .resumen-pill{display:inline-block;background:var(--sb-surface-2);color:var(--sb-text);padding:.3rem .7rem;border-radius:20px;font-size:.8rem;font-weight:600;margin:0 .4rem .6rem 0;border:1px solid var(--sb-border);}
+  .error-box{background:var(--sb-danger-bg);color:var(--sb-danger-text);border:1px solid #b91c1c;padding:.8rem;border-radius:10px;font-size:.85rem;}
+  .success-box{background:var(--sb-success-bg);color:var(--sb-success-text);border:1px solid #10b981;padding:.8rem;border-radius:10px;font-size:.85rem;margin-bottom:1rem;}
+  .pendiente-warning{color:var(--sb-warning-text);font-size:.85rem;margin-top:.5rem;}
+  .hidden{display:none;}
+  .lista-vista table{width:100%;border-collapse:collapse;font-size:.85rem;}
+  .lista-vista th{background:var(--sb-surface-2);text-align:left;padding:.6rem;color:var(--sb-text);font-size:.75rem;text-transform:uppercase;}
+  .lista-vista td{padding:.55rem .6rem;border-bottom:1px solid var(--sb-border);color:var(--sb-text);}
+  .lista-vista tr.estudio td:nth-child(2){font-weight:600;}
+  .lista-vista tr.pausa td{color:var(--sb-pausa-bg);}
+  .lista-vista tr.autocuidado td{color:var(--sb-autocuidado-bg);}
+  .dia-titulo{font-weight:700;margin:1rem 0 .4rem;color:var(--sb-text);font-size:.95rem;}
+  .sb-grid-wrapper{background:var(--sb-surface);border-radius:14px;padding:1rem;overflow-x:auto;border:1px solid var(--sb-border);}
+  .sb-grid-header{display:grid;grid-template-columns:60px repeat(7,minmax(110px,1fr));gap:2px;margin-bottom:4px;}
+  .sb-grid-dia{text-align:center;font-weight:700;padding:.5rem;color:var(--sb-text);border-bottom:2px solid var(--sb-border);font-size:.85rem;}
+  .sb-grid{display:grid;grid-template-columns:60px repeat(7,minmax(110px,1fr));gap:1px;background:var(--sb-border);position:relative;}
+  .sb-grid-hora{background:var(--sb-surface);color:var(--sb-text-muted);font-size:.7rem;padding:2px 6px;display:flex;align-items:flex-start;justify-content:flex-end;}
+  .sb-grid-slot{background:var(--sb-surface-2);opacity:.5;transition:background .15s;}
+  .sb-grid-slot.borde-hora{border-top:1px solid var(--sb-border);}
+  .sb-grid-slot.drop-target{background:var(--sb-accent);opacity:.7;}
+  .sb-grid-slot.drop-invalid{background:#ef4444;opacity:.6;}
+  .sb-bloque{border-radius:6px;padding:4px 6px;margin:1px;color:var(--sb-text-on-color);font-size:.72rem;cursor:grab;overflow:hidden;box-shadow:inset 0 -2px 0 rgba(0,0,0,.18);transition:transform .15s,box-shadow .15s,opacity .15s;z-index:1;user-select:none;}
+  .sb-bloque:hover{transform:scale(1.03);box-shadow:0 4px 12px rgba(0,0,0,.35);z-index:2;}
+  .sb-bloque:active{cursor:grabbing;}
+  .sb-bloque.dragging{opacity:.4;}
+  .sb-bloque--fijo{cursor:not-allowed !important;opacity:.85;}
+  .sb-bloque--estudio{background:var(--sb-estudio-bg);}
+  .sb-bloque--estudio.dif-alta{background:var(--sb-estudio-fuerte-bg);color:#fff;}
+  .sb-bloque--pausa{background:var(--sb-pausa-bg);}
+  .sb-bloque--autocuidado{background:var(--sb-autocuidado-bg);}
+  .sb-bloque--clase{background:var(--sb-clase-bg);color:#fff;}
+  .sb-bloque__titulo{font-weight:700;line-height:1.2;}
+  .sb-bloque__hora{font-size:.68rem;opacity:.9;margin-top:1px;}
+  .sb-bloque__detalle{font-size:.68rem;margin-top:2px;opacity:.9;}
+  .sb-leyenda{display:flex;gap:1rem;flex-wrap:wrap;margin:.8rem 0;font-size:.8rem;}
+  .sb-leyenda span{display:inline-flex;align-items:center;gap:.3rem;color:var(--sb-text);}
+  .sb-leyenda .swatch{width:14px;height:14px;border-radius:4px;display:inline-block;}
+  .drag-hint{font-size:.78rem;color:var(--sb-text-muted);margin:.4rem 0;padding:.4rem .7rem;background:var(--sb-surface-2);border-left:3px solid var(--sb-accent);border-radius:6px;}
+  .sb-metodos{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:1rem;margin-top:1rem;}
+  .sb-metodo{background:var(--sb-surface-2);border:1px solid var(--sb-border);border-radius:12px;padding:1rem;}
+  .sb-metodo header{display:flex;align-items:center;gap:.5rem;margin-bottom:.5rem;}
+  .sb-metodo h4{margin:0;flex:1;font-size:1rem;color:var(--sb-text);}
+  .sb-metodo__icono{font-size:1.5rem;}
+  .sb-metodo__score{background:var(--sb-accent);color:white;padding:.15rem .5rem;border-radius:12px;font-size:.7rem;font-weight:700;}
+  .sb-metodo__razon{background:var(--sb-surface);padding:.5rem .7rem;border-radius:8px;font-size:.8rem;color:var(--sb-text);border-left:3px solid var(--sb-accent);margin:.5rem 0;}
+  .sb-metodo p{color:var(--sb-text-muted);font-size:.85rem;margin:.5rem 0;}
+  .sb-metodo details summary{cursor:pointer;font-weight:600;color:var(--sb-accent);font-size:.85rem;margin-top:.5rem;}
+  .sb-metodo ul{margin:.5rem 0 0;padding-left:1.2rem;color:var(--sb-text);font-size:.85rem;}
+  .sb-metodo ul li{margin-bottom:.4rem;}
+  .sb-tips-card{background:var(--sb-surface);border-left:4px solid var(--sb-autocuidado-bg);}
+  .sb-tips-card ul{padding-left:1.2rem;color:var(--sb-text);}
+  .sb-tips-card ul li{margin-bottom:.5rem;font-size:.88rem;}
+  .favoritos-row{display:flex;gap:.5rem;align-items:center;flex-wrap:wrap;}
+  .favoritos-row select,.favoritos-row input{padding:.45rem;border:1px solid var(--sb-border);border-radius:8px;font-size:.85rem;background:var(--sb-surface-2);color:var(--sb-text);}
+  .file-label{display:inline-block;background:var(--sb-surface-2);color:var(--sb-text);padding:.5rem .9rem;border-radius:10px;cursor:pointer;font-size:.85rem;border:1px solid var(--sb-border);font-weight:600;}
+  .file-label:hover{background:var(--sb-border);}
+  input[type="file"]{display:none;}
+  *:focus-visible{outline:3px solid var(--sb-focus-ring);outline-offset:2px;border-radius:4px;}
+  @media (prefers-reduced-motion: reduce){.sb-bloque{transition:none;}}
+  footer{text-align:center;padding:1.5rem;color:var(--sb-text-muted);font-size:.8rem;border-top:1px solid var(--sb-border);margin-top:2rem;}
 </style>
 </head>
 <body>
@@ -265,7 +128,6 @@
 </header>
 
 <main>
-
   <div class="card">
     <h2>📥 Importar horario o cargar favorito</h2>
     <p class="descripcion">
@@ -278,7 +140,6 @@
     <div class="favoritos-row">
       <label class="file-label" for="file-import">📄 Importar Excel/CSV</label>
       <input type="file" id="file-import" accept=".csv,.xlsx,.xls" onchange="importarArchivo(event)">
-
       <select id="favoritos-select" aria-label="Favoritos guardados">
         <option value="">— Cargar favorito —</option>
       </select>
@@ -312,19 +173,14 @@
     <div class="tabs" id="tabs-container"></div>
     <div id="contenido-opciones"></div>
   </div>
-
 </main>
 
-<footer>
-  StudyBalance v3.1 — Desarrollado por Grupo 2 TDFI101 · UNAB · 2026
-</footer>
+<footer>StudyBalance v3.1 — Desarrollado por Grupo 2 TDFI101 · UNAB · 2026</footer>
 
 <script>
-/* ============================================================================
-   MOTOR DE CALENDARIZACIÓN
-   ========================================================================= */
-const DIAS_SEMANA = ['Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado', 'Domingo'];
-const DIAS_FIN_SEMANA = ['Sábado', 'Domingo'];
+/* ====== CONSTANTES ====== */
+const DIAS_SEMANA = ['Lunes','Martes','Miércoles','Jueves','Viernes','Sábado','Domingo'];
+const DIAS_FIN_SEMANA = ['Sábado','Domingo'];
 
 const REGLAS_NEUROCIENCIA = {
   DURACION_MAX_SESION_CONTINUA: 90,
@@ -333,442 +189,350 @@ const REGLAS_NEUROCIENCIA = {
   PAUSA_POMODORO: 5,
   PAUSA_LARGA_CADA_N_POMODOROS: 4,
   PAUSA_LARGA_DURACION: 20,
-  HORA_INICIO_VENTANA_OPTIMA: 8 * 60,
-  HORA_FIN_VENTANA_OPTIMA: 13 * 60,
-  HORA_INICIO_VENTANA_TARDE: 15 * 60,
-  HORA_FIN_VENTANA_TARDE: 19 * 60,
-  HORA_LIMITE_NOCTURNA: 22 * 60,
+  HORA_INICIO_VENTANA_OPTIMA: 8*60,
+  HORA_FIN_VENTANA_OPTIMA: 13*60,
+  HORA_INICIO_VENTANA_TARDE: 15*60,
+  HORA_FIN_VENTANA_TARDE: 19*60,
+  HORA_LIMITE_NOCTURNA: 22*60,
   MIN_BLOQUE_AUTOCUIDADO_DIARIO: 30,
   MAX_MINUTOS_ESTUDIO_POR_DIA: 240,
   MAX_MINUTOS_ESTUDIO_POR_SEMANA: 1200,
-  // ⭐ NUEVO: realismo horario
-  HORA_INICIO_FIN_DE_SEMANA: 10 * 60,   // sábado y domingo arrancan a las 10:00
-  HORA_INICIO_DIA_SEMANA: 7 * 60,       // entre semana arranca a las 07:00
-  PENALIZACION_MADRUGAR_FINDE: 22 * 60, // bloques en finde antes de las 11 reciben menos calidad
+  HORA_INICIO_FIN_DE_SEMANA: 10*60, // ⭐ Sábado/Domingo arrancan a las 10:00
+  HORA_INICIO_DIA_SEMANA: 7*60,
+  PENALIZACION_MADRUGAR_FINDE: 11*60,
 };
 
-function horaAMinutos(hhmm) { const [h, m] = hhmm.split(':').map(Number); return h * 60 + m; }
-function minutosAHora(mins) {
-  const m = ((mins % 1440) + 1440) % 1440;
-  return `${String(Math.floor(m/60)).padStart(2,'0')}:${String(m%60).padStart(2,'0')}`;
-}
-function dentroDeVentana(i, f, vi, vf) { return i >= vi && f <= vf; }
+function horaAMinutos(hhmm){const[h,m]=hhmm.split(':').map(Number);return h*60+m;}
+function minutosAHora(mins){const m=((mins%1440)+1440)%1440;return `${String(Math.floor(m/60)).padStart(2,'0')}:${String(m%60).padStart(2,'0')}`;}
+function dentroDeVentana(i,f,vi,vf){return i>=vi&&f<=vf;}
 
-function calcularBloquesLibresDelDia(ocupacionesDelDia, horaInicioDia, horaFinDia) {
+/* ====== MOTOR ====== */
+function calcularBloquesLibresDelDia(ocupacionesDelDia, horaInicioDia, horaFinDia){
   const ocupados = ocupacionesDelDia
-    .map(o => ({ inicio: horaAMinutos(o.inicio), fin: horaAMinutos(o.fin) }))
-    .filter(o => o.fin > o.inicio)
-    .sort((a, b) => a.inicio - b.inicio);
-  const libres = [];
-  let cursor = horaInicioDia;
-  for (const b of ocupados) {
-    if (b.inicio > cursor) libres.push({ inicio: cursor, fin: Math.min(b.inicio, horaFinDia) });
-    cursor = Math.max(cursor, b.fin);
-    if (cursor >= horaFinDia) break;
+    .map(o=>({inicio:horaAMinutos(o.inicio),fin:horaAMinutos(o.fin)}))
+    .filter(o=>o.fin>o.inicio)
+    .sort((a,b)=>a.inicio-b.inicio);
+  const libres=[]; let cursor=horaInicioDia;
+  for(const b of ocupados){
+    if(b.inicio>cursor) libres.push({inicio:cursor,fin:Math.min(b.inicio,horaFinDia)});
+    cursor=Math.max(cursor,b.fin);
+    if(cursor>=horaFinDia) break;
   }
-  if (cursor < horaFinDia) libres.push({ inicio: cursor, fin: horaFinDia });
-  return libres.filter(b => b.fin - b.inicio >= 10);
+  if(cursor<horaFinDia) libres.push({inicio:cursor,fin:horaFinDia});
+  return libres.filter(b=>b.fin-b.inicio>=10);
 }
 
-function calcularBloquesLibres(ocupaciones, horaFinDia = '23:00') {
-  const fMin = horaAMinutos(horaFinDia);
-  const mapa = new Map(DIAS_SEMANA.map(d => [d, []]));
-  ocupaciones.forEach(o => { if (mapa.has(o.dia)) mapa.get(o.dia).push(o); });
-  const r = {};
-  for (const d of DIAS_SEMANA) {
-    // ⭐ Fines de semana arrancan a las 10:00 (nada de estudiar a las 7am sábado)
+function calcularBloquesLibres(ocupaciones, horaFinDia='23:00'){
+  const fMin=horaAMinutos(horaFinDia);
+  const mapa=new Map(DIAS_SEMANA.map(d=>[d,[]]));
+  ocupaciones.forEach(o=>{if(mapa.has(o.dia)) mapa.get(o.dia).push(o);});
+  const r={};
+  for(const d of DIAS_SEMANA){
     const iMin = DIAS_FIN_SEMANA.includes(d)
       ? REGLAS_NEUROCIENCIA.HORA_INICIO_FIN_DE_SEMANA
       : REGLAS_NEUROCIENCIA.HORA_INICIO_DIA_SEMANA;
-    r[d] = calcularBloquesLibresDelDia(mapa.get(d), iMin, fMin);
+    r[d]=calcularBloquesLibresDelDia(mapa.get(d),iMin,fMin);
   }
   return r;
 }
 
-function calcularMinutosObjetivoPorAsignatura(asignaturas, minutosTot, { pesoFn = a => a.dificultad, minimoPorRamo = 60 } = {}) {
-  const minutosAReparte = Math.min(minutosTot, REGLAS_NEUROCIENCIA.MAX_MINUTOS_ESTUDIO_POR_SEMANA);
-  const pesos = asignaturas.map(a => Math.max(pesoFn(a), 0.1));
-  const suma = pesos.reduce((a,p) => a+p, 0);
-  let objetivo = asignaturas.map((a,i) => ({ ...a, minutosObjetivo: Math.round((pesos[i]/suma) * minutosAReparte) }));
-  const total = objetivo.reduce((a,o) => a+o.minutosObjetivo, 0);
-  if (total < asignaturas.length*minimoPorRamo && minutosAReparte >= asignaturas.length*minimoPorRamo) {
-    objetivo = objetivo.map(o => ({ ...o, minutosObjetivo: Math.max(o.minutosObjetivo, minimoPorRamo) }));
+function calcularMinutosObjetivoPorAsignatura(asignaturas, minutosTot, {pesoFn=a=>a.dificultad, minimoPorRamo=60}={}){
+  const minutosAReparte=Math.min(minutosTot, REGLAS_NEUROCIENCIA.MAX_MINUTOS_ESTUDIO_POR_SEMANA);
+  const pesos=asignaturas.map(a=>Math.max(pesoFn(a),0.1));
+  const suma=pesos.reduce((a,p)=>a+p,0);
+  let objetivo=asignaturas.map((a,i)=>({...a, minutosObjetivo:Math.round((pesos[i]/suma)*minutosAReparte)}));
+  const total=objetivo.reduce((a,o)=>a+o.minutosObjetivo,0);
+  if(total<asignaturas.length*minimoPorRamo && minutosAReparte>=asignaturas.length*minimoPorRamo){
+    objetivo=objetivo.map(o=>({...o, minutosObjetivo:Math.max(o.minutosObjetivo,minimoPorRamo)}));
   }
-  return objetivo.sort((a,b) => b.dificultad - a.dificultad);
+  return objetivo.sort((a,b)=>b.dificultad-a.dificultad);
 }
 
-function calidadHoraria(b, dia) {
-  const R = REGLAS_NEUROCIENCIA;
-  const esFinde = DIAS_FIN_SEMANA.includes(dia);
-  // ⭐ Penalización: en finde, antes de las 11 baja la calidad
-  if (esFinde && b.inicio < R.PENALIZACION_MADRUGAR_FINDE) return 1;
-  if (dentroDeVentana(b.inicio, b.fin, R.HORA_INICIO_VENTANA_OPTIMA, R.HORA_FIN_VENTANA_OPTIMA))
-    return esFinde ? 2 : 3;
-  if (dentroDeVentana(b.inicio, b.fin, R.HORA_INICIO_VENTANA_TARDE, R.HORA_FIN_VENTANA_TARDE)) return 2;
-  if (b.inicio >= R.HORA_LIMITE_NOCTURNA) return 0;
+function calidadHoraria(b, dia){
+  const R=REGLAS_NEUROCIENCIA;
+  const esFinde=DIAS_FIN_SEMANA.includes(dia);
+  if(esFinde && b.inicio<R.PENALIZACION_MADRUGAR_FINDE) return 1;
+  if(dentroDeVentana(b.inicio,b.fin,R.HORA_INICIO_VENTANA_OPTIMA,R.HORA_FIN_VENTANA_OPTIMA)) return esFinde?2:3;
+  if(dentroDeVentana(b.inicio,b.fin,R.HORA_INICIO_VENTANA_TARDE,R.HORA_FIN_VENTANA_TARDE)) return 2;
+  if(b.inicio>=R.HORA_LIMITE_NOCTURNA) return 0;
   return 1;
 }
 
-function listarYOrdenarBloquesPorCalidad(bloquesPorDia) {
-  const lista = [];
-  for (const d of DIAS_SEMANA)
-    for (const b of bloquesPorDia[d]) lista.push({ dia: d, ...b, calidad: calidadHoraria(b, d) });
-  return lista.sort((a,b) => (b.calidad - a.calidad) || ((b.fin-b.inicio) - (a.fin-a.inicio)));
+function listarYOrdenarBloquesPorCalidad(bloquesPorDia){
+  const lista=[];
+  for(const d of DIAS_SEMANA)
+    for(const b of bloquesPorDia[d]) lista.push({dia:d, ...b, calidad:calidadHoraria(b,d)});
+  return lista.sort((a,b)=>(b.calidad-a.calidad)||((b.fin-b.inicio)-(a.fin-a.inicio)));
 }
 
-function reservarAutocuidado(bloquesPorDia) {
-  const eventosAutocuidado = []; const bloquesRestantes = {};
-  for (const dia of DIAS_SEMANA) {
-    const bloques = [...bloquesPorDia[dia]].sort((a,b) => a.inicio-b.inicio);
-    bloquesRestantes[dia] = [];
-    let reservado = false;
-    for (let i = bloques.length-1; i >= 0; i--) {
-      const b = bloques[i]; const dur = b.fin - b.inicio;
-      if (!reservado && dur >= REGLAS_NEUROCIENCIA.MIN_BLOQUE_AUTOCUIDADO_DIARIO + 10) {
-        const inicioA = b.fin - REGLAS_NEUROCIENCIA.MIN_BLOQUE_AUTOCUIDADO_DIARIO;
-        eventosAutocuidado.push({ dia, inicio: inicioA, fin: b.fin });
-        bloquesRestantes[dia].unshift({ inicio: b.inicio, fin: inicioA });
-        reservado = true;
+function reservarAutocuidado(bloquesPorDia){
+  const eventosAutocuidado=[]; const bloquesRestantes={};
+  for(const dia of DIAS_SEMANA){
+    const bloques=[...bloquesPorDia[dia]].sort((a,b)=>a.inicio-b.inicio);
+    bloquesRestantes[dia]=[];
+    let reservado=false;
+    for(let i=bloques.length-1;i>=0;i--){
+      const b=bloques[i]; const dur=b.fin-b.inicio;
+      if(!reservado && dur>=REGLAS_NEUROCIENCIA.MIN_BLOQUE_AUTOCUIDADO_DIARIO+10){
+        const inicioA=b.fin-REGLAS_NEUROCIENCIA.MIN_BLOQUE_AUTOCUIDADO_DIARIO;
+        eventosAutocuidado.push({dia, inicio:inicioA, fin:b.fin});
+        bloquesRestantes[dia].unshift({inicio:b.inicio, fin:inicioA});
+        reservado=true;
       } else {
-        bloquesRestantes[dia].unshift({ inicio: b.inicio, fin: b.fin });
+        bloquesRestantes[dia].unshift({inicio:b.inicio, fin:b.fin});
       }
     }
   }
-  return { eventosAutocuidado, bloquesRestantes };
+  return {eventosAutocuidado, bloquesRestantes};
 }
 
-function asignarSesiones(bloquesPorDia, asignaturasObj, { duracionSesion, duracionPausa }) {
-  const bloquesOrd = listarYOrdenarBloquesPorCalidad(bloquesPorDia).map(b => ({ ...b, restante: b.fin-b.inicio }));
-  const pendientes = asignaturasObj.map(a => ({ ...a, minutosPendientes: a.minutosObjetivo }));
-  const calendario = Object.fromEntries(DIAS_SEMANA.map(d => [d, []]));
-  const minPorDia = Object.fromEntries(DIAS_SEMANA.map(d => [d, 0]));
-
-  for (const bloque of bloquesOrd) {
-    if (bloque.restante < 15) continue;
-    let espacio = bloque.restante;
-    let cursor = bloque.fin - espacio;
-    let ultima = null;
-    while (espacio >= 15 && pendientes.some(p => p.minutosPendientes > 0)) {
-      if (minPorDia[bloque.dia] >= REGLAS_NEUROCIENCIA.MAX_MINUTOS_ESTUDIO_POR_DIA) break;
-      pendientes.sort((a,b) => b.minutosPendientes - a.minutosPendientes);
-      let asign = pendientes.find(p => p.minutosPendientes > 0 && p.nombre !== ultima) || pendientes.find(p => p.minutosPendientes > 0);
-      if (!asign) break;
-      const margen = REGLAS_NEUROCIENCIA.MAX_MINUTOS_ESTUDIO_POR_DIA - minPorDia[bloque.dia];
-      const maxSes = Math.min(duracionSesion, margen);
-      const t = Math.min(espacio, asign.minutosPendientes, maxSes);
-      if (t < 10) break;
-      calendario[bloque.dia].push({ tipo:'estudio', asignatura:asign.nombre, dificultad:asign.dificultad,
-        dia:bloque.dia, inicio:cursor, fin:cursor+t, duracion:t });
-      asign.minutosPendientes -= t; minPorDia[bloque.dia] += t;
-      espacio -= t; cursor += t; ultima = asign.nombre;
-      if (espacio >= 10 && pendientes.some(p => p.minutosPendientes > 0)) {
-        const pausa = Math.min(duracionPausa, espacio);
-        calendario[bloque.dia].push({ tipo:'pausa', etiqueta: duracionPausa>=15?'Pausa activa':'Micro-pausa',
-          dia:bloque.dia, inicio:cursor, fin:cursor+pausa, duracion:pausa });
-        espacio -= pausa; cursor += pausa;
+function asignarSesiones(bloquesPorDia, asignaturasObj, {duracionSesion, duracionPausa}){
+  const bloquesOrd=listarYOrdenarBloquesPorCalidad(bloquesPorDia).map(b=>({...b, restante:b.fin-b.inicio}));
+  const pendientes=asignaturasObj.map(a=>({...a, minutosPendientes:a.minutosObjetivo}));
+  const calendario=Object.fromEntries(DIAS_SEMANA.map(d=>[d,[]]));
+  const minPorDia=Object.fromEntries(DIAS_SEMANA.map(d=>[d,0]));
+  for(const bloque of bloquesOrd){
+    if(bloque.restante<15) continue;
+    let espacio=bloque.restante; let cursor=bloque.fin-espacio; let ultima=null;
+    while(espacio>=15 && pendientes.some(p=>p.minutosPendientes>0)){
+      if(minPorDia[bloque.dia]>=REGLAS_NEUROCIENCIA.MAX_MINUTOS_ESTUDIO_POR_DIA) break;
+      pendientes.sort((a,b)=>b.minutosPendientes-a.minutosPendientes);
+      let asign=pendientes.find(p=>p.minutosPendientes>0 && p.nombre!==ultima) || pendientes.find(p=>p.minutosPendientes>0);
+      if(!asign) break;
+      const margen=REGLAS_NEUROCIENCIA.MAX_MINUTOS_ESTUDIO_POR_DIA-minPorDia[bloque.dia];
+      const maxSes=Math.min(duracionSesion,margen);
+      const t=Math.min(espacio,asign.minutosPendientes,maxSes);
+      if(t<10) break;
+      calendario[bloque.dia].push({tipo:'estudio', asignatura:asign.nombre, dificultad:asign.dificultad, dia:bloque.dia, inicio:cursor, fin:cursor+t, duracion:t});
+      asign.minutosPendientes-=t; minPorDia[bloque.dia]+=t;
+      espacio-=t; cursor+=t; ultima=asign.nombre;
+      if(espacio>=10 && pendientes.some(p=>p.minutosPendientes>0)){
+        const pausa=Math.min(duracionPausa,espacio);
+        calendario[bloque.dia].push({tipo:'pausa', etiqueta:duracionPausa>=15?'Pausa activa':'Micro-pausa', dia:bloque.dia, inicio:cursor, fin:cursor+pausa, duracion:pausa});
+        espacio-=pausa; cursor+=pausa;
       }
     }
   }
-  for (const d of DIAS_SEMANA) calendario[d].sort((a,b) => a.inicio - b.inicio);
-  const resumenPendientes = pendientes.filter(p => p.minutosPendientes > 0)
-    .map(p => ({ nombre: p.nombre, minutosNoAsignados: p.minutosPendientes }));
-  return { calendario, resumenPendientes };
+  for(const d of DIAS_SEMANA) calendario[d].sort((a,b)=>a.inicio-b.inicio);
+  const resumenPendientes=pendientes.filter(p=>p.minutosPendientes>0).map(p=>({nombre:p.nombre, minutosNoAsignados:p.minutosPendientes}));
+  return {calendario, resumenPendientes};
 }
 
-function asignarSesionesPomodoro(bloquesPorDia, asignaturasObj) {
-  const R = REGLAS_NEUROCIENCIA;
-  const bloquesOrd = listarYOrdenarBloquesPorCalidad(bloquesPorDia).map(b => ({ ...b, restante: b.fin-b.inicio }));
-  const pendientes = asignaturasObj.map(a => ({ ...a, minutosPendientes: a.minutosObjetivo }));
-  const calendario = Object.fromEntries(DIAS_SEMANA.map(d => [d, []]));
-  const minPorDia = Object.fromEntries(DIAS_SEMANA.map(d => [d, 0]));
-
-  for (const bloque of bloquesOrd) {
-    let cursor = bloque.inicio; let racha = 0; let ultima = null;
-    while (cursor < bloque.fin && pendientes.some(p => p.minutosPendientes > 0)) {
-      if (minPorDia[bloque.dia] >= R.MAX_MINUTOS_ESTUDIO_POR_DIA) break;
-      pendientes.sort((a,b) => b.minutosPendientes - a.minutosPendientes);
-      const alternar = racha > 0 && racha % 2 === 0;
-      let asign = alternar
-        ? pendientes.find(p => p.minutosPendientes > 0 && p.nombre !== ultima)
-        : pendientes.find(p => p.minutosPendientes > 0 && p.nombre === ultima);
-      if (!asign) asign = pendientes.find(p => p.minutosPendientes > 0);
-      if (!asign) break;
-      const margen = R.MAX_MINUTOS_ESTUDIO_POR_DIA - minPorDia[bloque.dia];
-      const finPom = Math.min(cursor + R.DURACION_BLOQUE_POMODORO, bloque.fin);
-      const dur = Math.min(finPom - cursor, margen);
-      if (dur < 10) break;
-      calendario[bloque.dia].push({ tipo:'estudio', asignatura:asign.nombre, dificultad:asign.dificultad,
-        inicio:cursor, fin:cursor+dur, duracion:dur, dia:bloque.dia });
-      asign.minutosPendientes -= dur; minPorDia[bloque.dia] += dur;
-      cursor += dur; racha++; ultima = asign.nombre;
-      if (cursor >= bloque.fin || minPorDia[bloque.dia] >= R.MAX_MINUTOS_ESTUDIO_POR_DIA) break;
-      const esLarga = racha % R.PAUSA_LARGA_CADA_N_POMODOROS === 0;
-      const durP = esLarga ? R.PAUSA_LARGA_DURACION : R.PAUSA_POMODORO;
-      const finP = Math.min(cursor + durP, bloque.fin);
-      calendario[bloque.dia].push({ tipo:'pausa', etiqueta: esLarga?'Pausa larga':'Micro-pausa',
-        inicio:cursor, fin:finP, duracion:finP-cursor, dia:bloque.dia });
-      cursor = finP;
+function asignarSesionesPomodoro(bloquesPorDia, asignaturasObj){
+  const R=REGLAS_NEUROCIENCIA;
+  const bloquesOrd=listarYOrdenarBloquesPorCalidad(bloquesPorDia).map(b=>({...b, restante:b.fin-b.inicio}));
+  const pendientes=asignaturasObj.map(a=>({...a, minutosPendientes:a.minutosObjetivo}));
+  const calendario=Object.fromEntries(DIAS_SEMANA.map(d=>[d,[]]));
+  const minPorDia=Object.fromEntries(DIAS_SEMANA.map(d=>[d,0]));
+  for(const bloque of bloquesOrd){
+    let cursor=bloque.inicio; let racha=0; let ultima=null;
+    while(cursor<bloque.fin && pendientes.some(p=>p.minutosPendientes>0)){
+      if(minPorDia[bloque.dia]>=R.MAX_MINUTOS_ESTUDIO_POR_DIA) break;
+      pendientes.sort((a,b)=>b.minutosPendientes-a.minutosPendientes);
+      const alternar=racha>0 && racha%2===0;
+      let asign=alternar
+        ? pendientes.find(p=>p.minutosPendientes>0 && p.nombre!==ultima)
+        : pendientes.find(p=>p.minutosPendientes>0 && p.nombre===ultima);
+      if(!asign) asign=pendientes.find(p=>p.minutosPendientes>0);
+      if(!asign) break;
+      const margen=R.MAX_MINUTOS_ESTUDIO_POR_DIA-minPorDia[bloque.dia];
+      const finPom=Math.min(cursor+R.DURACION_BLOQUE_POMODORO,bloque.fin);
+      const dur=Math.min(finPom-cursor,margen);
+      if(dur<10) break;
+      calendario[bloque.dia].push({tipo:'estudio', asignatura:asign.nombre, dificultad:asign.dificultad, inicio:cursor, fin:cursor+dur, duracion:dur, dia:bloque.dia});
+      asign.minutosPendientes-=dur; minPorDia[bloque.dia]+=dur;
+      cursor+=dur; racha++; ultima=asign.nombre;
+      if(cursor>=bloque.fin || minPorDia[bloque.dia]>=R.MAX_MINUTOS_ESTUDIO_POR_DIA) break;
+      const esLarga=racha%R.PAUSA_LARGA_CADA_N_POMODOROS===0;
+      const durP=esLarga?R.PAUSA_LARGA_DURACION:R.PAUSA_POMODORO;
+      const finP=Math.min(cursor+durP,bloque.fin);
+      calendario[bloque.dia].push({tipo:'pausa', etiqueta:esLarga?'Pausa larga':'Micro-pausa', inicio:cursor, fin:finP, duracion:finP-cursor, dia:bloque.dia});
+      cursor=finP;
     }
   }
-  for (const d of DIAS_SEMANA) calendario[d].sort((a,b) => a.inicio - b.inicio);
-  const resumenPendientes = pendientes.filter(p => p.minutosPendientes > 0)
-    .map(p => ({ nombre: p.nombre, minutosNoAsignados: p.minutosPendientes }));
-  return { calendario, resumenPendientes };
+  for(const d of DIAS_SEMANA) calendario[d].sort((a,b)=>a.inicio-b.inicio);
+  const resumenPendientes=pendientes.filter(p=>p.minutosPendientes>0).map(p=>({nombre:p.nombre, minutosNoAsignados:p.minutosPendientes}));
+  return {calendario, resumenPendientes};
 }
 
-function formatearCalendarioParaUI(calendario, eventosAutocuidado, ocupacionesFijas, nombreEstrategia) {
-  const dias = {};
-  for (const dia of DIAS_SEMANA) {
-    const evs = [...calendario[dia]];
-    eventosAutocuidado.filter(e => e.dia === dia).forEach(a => evs.push({
-      tipo:'autocuidado', etiqueta:'Autocuidado / Descanso', inicio:a.inicio, fin:a.fin, duracion:a.fin-a.inicio, dia
-    }));
-    // ⭐ Las ocupaciones fijas (clases) también aparecen en grid pero NO son movibles
-    ocupacionesFijas.filter(o => o.dia === dia).forEach(o => {
-      const iMin = horaAMinutos(o.inicio), fMin = horaAMinutos(o.fin);
-      evs.push({ tipo:'clase', etiqueta:o.etiqueta, inicio:iMin, fin:fMin, duracion:fMin-iMin, dia });
+function formatearCalendarioParaUI(calendario, eventosAutocuidado, ocupacionesFijas, nombreEstrategia){
+  const dias={};
+  for(const dia of DIAS_SEMANA){
+    const evs=[...calendario[dia]];
+    eventosAutocuidado.filter(e=>e.dia===dia).forEach(a=>evs.push({tipo:'autocuidado', etiqueta:'Autocuidado / Descanso', inicio:a.inicio, fin:a.fin, duracion:a.fin-a.inicio, dia}));
+    ocupacionesFijas.filter(o=>o.dia===dia).forEach(o=>{
+      const iMin=horaAMinutos(o.inicio), fMin=horaAMinutos(o.fin);
+      evs.push({tipo:'clase', etiqueta:o.etiqueta, inicio:iMin, fin:fMin, duracion:fMin-iMin, dia});
     });
-    evs.sort((a,b) => a.inicio - b.inicio);
-    dias[dia] = evs.map(ev => ({
-      bloqueHorario: `${minutosAHora(ev.inicio)} - ${minutosAHora(ev.fin)}`,
-      inicioMin: ev.inicio, finMin: ev.fin,
-      tipo: ev.tipo,
-      actividad: ev.tipo === 'estudio' ? ev.asignatura : (ev.etiqueta || 'Pausa'),
-      dificultad: ev.dificultad || null,
-      detalle: ev.tipo === 'estudio' ? `Dificultad ${ev.dificultad} · ${ev.duracion} min` :
-               ev.tipo === 'clase'   ? 'Clase fija' : `${ev.duracion} min`,
-      duracionMin: ev.duracion,
-      movible: ev.tipo === 'estudio' || ev.tipo === 'pausa' || ev.tipo === 'autocuidado',
+    evs.sort((a,b)=>a.inicio-b.inicio);
+    dias[dia]=evs.map(ev=>({
+      bloqueHorario:`${minutosAHora(ev.inicio)} - ${minutosAHora(ev.fin)}`,
+      inicioMin:ev.inicio, finMin:ev.fin, tipo:ev.tipo,
+      actividad:ev.tipo==='estudio'?ev.asignatura:(ev.etiqueta||'Pausa'),
+      dificultad:ev.dificultad||null,
+      detalle: ev.tipo==='estudio'?`Dificultad ${ev.dificultad} · ${ev.duracion} min`
+            : ev.tipo==='clase'?'Clase fija':`${ev.duracion} min`,
+      duracionMin:ev.duracion,
+      movible: ev.tipo==='estudio'||ev.tipo==='pausa'||ev.tipo==='autocuidado',
     }));
   }
-  const minTot = Object.values(calendario).flat().filter(e => e.tipo === 'estudio').reduce((a,e) => a+e.duracion, 0);
-  return {
-    estrategia: nombreEstrategia,
-    resumen: { minutosEstudioTotales: minTot, horasEstudioTotales: +(minTot/60).toFixed(1) },
-    dias,
-  };
+  const minTot=Object.values(calendario).flat().filter(e=>e.tipo==='estudio').reduce((a,e)=>a+e.duracion,0);
+  return {estrategia:nombreEstrategia, resumen:{minutosEstudioTotales:minTot, horasEstudioTotales:+(minTot/60).toFixed(1)}, dias};
 }
 
-function generarOpcionEnfoqueIntensivo(bloques, asign, ocup, minTot) {
-  const objetivo = calcularMinutosObjetivoPorAsignatura(asign, minTot, { pesoFn: a => a.dificultad ** 1.5, minimoPorRamo: 45 });
-  const { eventosAutocuidado, bloquesRestantes } = reservarAutocuidado(bloques);
-  const { calendario, resumenPendientes } = asignarSesiones(bloquesRestantes, objetivo, {
-    duracionSesion: REGLAS_NEUROCIENCIA.DURACION_MAX_SESION_CONTINUA,
-    duracionPausa: REGLAS_NEUROCIENCIA.PAUSA_ACTIVA_OBLIGATORIA,
-  });
-  const s = formatearCalendarioParaUI(calendario, eventosAutocuidado, ocup, 'Opción 1: Enfoque Intensivo por Bloques');
-  s.descripcion = 'Sesiones largas (hasta 90 min) en los bloques de mejor calidad horaria, con fuerte prioridad para las asignaturas más difíciles.';
-  s.resumenPendientes = resumenPendientes;
-  return s;
+function generarOpcionEnfoqueIntensivo(bloques, asign, ocup, minTot){
+  const objetivo=calcularMinutosObjetivoPorAsignatura(asign, minTot, {pesoFn:a=>a.dificultad**1.5, minimoPorRamo:45});
+  const {eventosAutocuidado, bloquesRestantes}=reservarAutocuidado(bloques);
+  const {calendario, resumenPendientes}=asignarSesiones(bloquesRestantes, objetivo, {duracionSesion:REGLAS_NEUROCIENCIA.DURACION_MAX_SESION_CONTINUA, duracionPausa:REGLAS_NEUROCIENCIA.PAUSA_ACTIVA_OBLIGATORIA});
+  const s=formatearCalendarioParaUI(calendario, eventosAutocuidado, ocup, 'Opción 1: Enfoque Intensivo por Bloques');
+  s.descripcion='Sesiones largas (hasta 90 min) en los bloques de mejor calidad horaria, con fuerte prioridad para las asignaturas más difíciles.';
+  s.resumenPendientes=resumenPendientes; return s;
 }
-function generarOpcionPomodoro(bloques, asign, ocup, minTot) {
-  const objetivo = calcularMinutosObjetivoPorAsignatura(asign, minTot, { pesoFn: a => a.dificultad, minimoPorRamo: 50 });
-  const { eventosAutocuidado, bloquesRestantes } = reservarAutocuidado(bloques);
-  const { calendario, resumenPendientes } = asignarSesionesPomodoro(bloquesRestantes, objetivo);
-  const s = formatearCalendarioParaUI(calendario, eventosAutocuidado, ocup, 'Opción 2: Distribución Fragmentada Pomodoro');
-  s.descripcion = 'Ciclos de 25 min de estudio + 5 min de pausa, con pausa larga de 20 min cada 4 ciclos.';
-  s.resumenPendientes = resumenPendientes;
-  return s;
+function generarOpcionPomodoro(bloques, asign, ocup, minTot){
+  const objetivo=calcularMinutosObjetivoPorAsignatura(asign, minTot, {pesoFn:a=>a.dificultad, minimoPorRamo:50});
+  const {eventosAutocuidado, bloquesRestantes}=reservarAutocuidado(bloques);
+  const {calendario, resumenPendientes}=asignarSesionesPomodoro(bloquesRestantes, objetivo);
+  const s=formatearCalendarioParaUI(calendario, eventosAutocuidado, ocup, 'Opción 2: Distribución Fragmentada Pomodoro');
+  s.descripcion='Ciclos de 25 min de estudio + 5 min de pausa, con pausa larga de 20 min cada 4 ciclos.';
+  s.resumenPendientes=resumenPendientes; return s;
 }
-function generarOpcionBalanceFinDeSemana(bloques, asign, ocup, minTot) {
-  const objetivo = calcularMinutosObjetivoPorAsignatura(asign, minTot, { pesoFn: a => a.dificultad, minimoPorRamo: 40 });
-  const { eventosAutocuidado, bloquesRestantes } = reservarAutocuidado(bloques);
-  const { calendario, resumenPendientes } = asignarSesiones(bloquesRestantes, objetivo, {
-    duracionSesion: 60, duracionPausa: REGLAS_NEUROCIENCIA.PAUSA_ACTIVA_OBLIGATORIA,
-  });
-  const s = formatearCalendarioParaUI(calendario, eventosAutocuidado, ocup, 'Opción 3: Balance Equilibrado de Fin de Semana');
-  s.descripcion = 'Sesiones más cortas (máx. 60 min) repartidas a lo largo de toda la semana, incluyendo sábado y domingo (a partir de las 10:00) en dosis bajas.';
-  s.resumenPendientes = resumenPendientes;
-  return s;
+function generarOpcionBalanceFinDeSemana(bloques, asign, ocup, minTot){
+  const objetivo=calcularMinutosObjetivoPorAsignatura(asign, minTot, {pesoFn:a=>a.dificultad, minimoPorRamo:40});
+  const {eventosAutocuidado, bloquesRestantes}=reservarAutocuidado(bloques);
+  const {calendario, resumenPendientes}=asignarSesiones(bloquesRestantes, objetivo, {duracionSesion:60, duracionPausa:REGLAS_NEUROCIENCIA.PAUSA_ACTIVA_OBLIGATORIA});
+  const s=formatearCalendarioParaUI(calendario, eventosAutocuidado, ocup, 'Opción 3: Balance Equilibrado de Fin de Semana');
+  s.descripcion='Sesiones más cortas (máx. 60 min) repartidas a lo largo de la semana. Sábado y domingo solo desde las 10:00.';
+  s.resumenPendientes=resumenPendientes; return s;
 }
 
-function generarRutinasDeEstudio(inputData) {
-  const { ocupaciones = [], asignaturas = [], disponibilidad = null, horaFinDia = '23:00' } = inputData;
-  if (!asignaturas.length) throw new Error('Se requiere al menos una asignatura con su dificultad percibida.');
-  let bloques;
-  if (disponibilidad && disponibilidad.length) {
-    bloques = Object.fromEntries(DIAS_SEMANA.map(d => [d, []]));
-    disponibilidad.forEach(b => { if (bloques[b.dia]) bloques[b.dia].push({ inicio: horaAMinutos(b.inicio), fin: horaAMinutos(b.fin) }); });
-  } else {
-    bloques = calcularBloquesLibres(ocupaciones, horaFinDia);
-  }
-  const minTot = Object.values(bloques).flat().reduce((a,b) => a + (b.fin-b.inicio), 0);
-  if (minTot === 0) throw new Error('No se detectaron bloques de tiempo libre con la información entregada.');
-  const clonar = o => JSON.parse(JSON.stringify(o));
-  const op1 = generarOpcionEnfoqueIntensivo(clonar(bloques), asignaturas, ocupaciones, minTot);
-  const op2 = generarOpcionPomodoro(clonar(bloques), asignaturas, ocupaciones, minTot);
-  const op3 = generarOpcionBalanceFinDeSemana(clonar(bloques), asignaturas, ocupaciones, minTot);
-
-  op1.metodosSugeridos = sugerirMetodos(op1, asignaturas);
-  op2.metodosSugeridos = sugerirMetodos(op2, asignaturas);
-  op3.metodosSugeridos = sugerirMetodos(op3, asignaturas);
-
-  return {
-    metadata: {
-      generadoEn: new Date().toISOString(),
-      minutosLibresDetectados: minTot,
-      horasLibresDetectadas: +(minTot/60).toFixed(1),
-      cantidadAsignaturas: asignaturas.length,
-      tipsUniversales: TIPS_ANTI_PROCRASTINACION,
-    },
-    opciones: [op1, op2, op3],
-  };
+function generarRutinasDeEstudio(inputData){
+  const {ocupaciones=[], asignaturas=[], horaFinDia='23:00'}=inputData;
+  if(!asignaturas.length) throw new Error('Se requiere al menos una asignatura con su dificultad percibida.');
+  const bloques=calcularBloquesLibres(ocupaciones, horaFinDia);
+  const minTot=Object.values(bloques).flat().reduce((a,b)=>a+(b.fin-b.inicio),0);
+  if(minTot===0) throw new Error('No se detectaron bloques de tiempo libre con la información entregada.');
+  const clonar=o=>JSON.parse(JSON.stringify(o));
+  const op1=generarOpcionEnfoqueIntensivo(clonar(bloques), asignaturas, ocupaciones, minTot);
+  const op2=generarOpcionPomodoro(clonar(bloques), asignaturas, ocupaciones, minTot);
+  const op3=generarOpcionBalanceFinDeSemana(clonar(bloques), asignaturas, ocupaciones, minTot);
+  op1.metodosSugeridos=sugerirMetodos(op1, asignaturas);
+  op2.metodosSugeridos=sugerirMetodos(op2, asignaturas);
+  op3.metodosSugeridos=sugerirMetodos(op3, asignaturas);
+  return {metadata:{generadoEn:new Date().toISOString(), minutosLibresDetectados:minTot, horasLibresDetectadas:+(minTot/60).toFixed(1), cantidadAsignaturas:asignaturas.length, tipsUniversales:TIPS_ANTI_PROCRASTINACION}, opciones:[op1,op2,op3]};
 }
 
-/* ============================================================================
-   MÓDULO: SUGERENCIA INTELIGENTE DE MÉTODOS DE ESTUDIO
-   ========================================================================= */
+/* ====== MÉTODOS DE ESTUDIO ====== */
 const CATALOGO_METODOS = {
-  POMODORO: { id:'pomodoro', nombre:'Técnica Pomodoro', icono:'🍅',
+  POMODORO:{id:'pomodoro', nombre:'Técnica Pomodoro', icono:'🍅',
     descripcion:'Ciclos de 25 min de foco profundo + 5 min de pausa. Cada 4 ciclos, pausa larga de 20 min.',
-    tips:[
-      'Silencia notificaciones del celular antes de iniciar el primer pomodoro.',
-      'Anota las distracciones que aparezcan; no las resuelvas, las atiendes en la pausa.',
-      'Usa la pausa de 5 min para estirar o tomar agua — NUNCA para redes sociales.',
-      'Si terminas la tarea antes del pomodoro, revisa lo aprendido hasta que suene el timer.',
-    ]},
-  FEYNMAN: { id:'feynman', nombre:'Técnica Feynman', icono:'🧠',
-    descripcion:'Explica el tema como si se lo enseñaras a alguien sin conocimiento previo. Detecta huecos y vuelve a la fuente.',
-    tips:[
-      'Toma una hoja en blanco y escribe el concepto con tus palabras, sin mirar apuntes.',
-      'Cuando te trabes, ESE es el hueco real. Vuelve al libro solo en ese punto.',
-      'Grábate explicando en voz alta 2 minutos: al escucharte detectas inconsistencias.',
-      'Usa analogías cotidianas (ej: una derivada es la velocidad del cambio).',
-    ]},
-  TIME_BLOCKING: { id:'time_blocking', nombre:'Bloques de Tiempo', icono:'🗓️',
-    descripcion:'Sesiones largas (60-90 min) dedicadas a UNA sola asignatura, con pausas activas de 15 min entre bloques.',
-    tips:[
-      'Antes de iniciar, define EN UNA FRASE qué entregable concreto saldrá del bloque.',
-      'Cierra todas las pestañas que no sean del bloque actual.',
-      'En la pausa de 15 min: caminar, no scrollear.',
-      'Al terminar el bloque, escribe 2 líneas de lo que aprendiste.',
-    ]},
-  ACTIVE_RECALL: { id:'active_recall', nombre:'Recuperación Activa + Repaso Espaciado', icono:'🔁',
-    descripcion:'En vez de releer, te auto-evalúas con preguntas. Repites el tema a intervalos crecientes (1d, 3d, 7d).',
-    tips:[
-      'Cierra los apuntes y escribe TODO lo que recuerdes del tema. Después comparas y corriges.',
-      'Usa flashcards (Anki, Quizlet) — la app te avisa cuándo toca repasar.',
-      'Resuelve ejercicios SIN mirar la solución, aunque te demores el doble.',
-      'Cada error es información valiosa: anótalo en una "lista de errores frecuentes".',
-    ]},
-  CORNELL: { id:'cornell', nombre:'Método Cornell', icono:'📝',
-    descripcion:'Divide la hoja en 3 zonas: notas, palabras clave y resumen. Ideal para procesar clases recién recibidas.',
-    tips:[
-      'Estructura la hoja: izquierda (preguntas), derecha (detalle), abajo (resumen 3 líneas).',
-      'Llena el resumen en las primeras 24h después de la clase — ahí se consolida la memoria.',
-      'Las palabras clave de la izquierda son tus futuros prompts de auto-evaluación.',
-    ]},
+    tips:['Silencia notificaciones del celular antes del primer pomodoro.',
+          'Anota las distracciones; las atiendes en la pausa.',
+          'Pausa de 5 min: estirar o tomar agua — NO redes sociales.',
+          'Si terminas antes, revisa lo aprendido hasta que suene el timer.']},
+  FEYNMAN:{id:'feynman', nombre:'Técnica Feynman', icono:'🧠',
+    descripcion:'Explica el tema como si se lo enseñaras a alguien sin conocimiento previo.',
+    tips:['Escribe el concepto en una hoja en blanco, sin mirar apuntes.',
+          'Cuando te trabes, ESE es el hueco real. Vuelve al libro solo en ese punto.',
+          'Grábate explicando 2 min en voz alta: detectas inconsistencias.',
+          'Usa analogías cotidianas.']},
+  TIME_BLOCKING:{id:'time_blocking', nombre:'Bloques de Tiempo', icono:'🗓️',
+    descripcion:'Sesiones largas (60-90 min) dedicadas a UNA sola asignatura, con pausas de 15 min.',
+    tips:['Define EN UNA FRASE qué entregable saldrá del bloque.',
+          'Cierra todas las pestañas que no sean del bloque actual.',
+          'En la pausa de 15 min: caminar, no scrollear.',
+          'Al terminar, escribe 2 líneas de lo aprendido.']},
+  ACTIVE_RECALL:{id:'active_recall', nombre:'Recuperación Activa + Repaso Espaciado', icono:'🔁',
+    descripcion:'Te auto-evalúas con preguntas y repites el tema a intervalos crecientes (1d, 3d, 7d).',
+    tips:['Cierra los apuntes y escribe TODO lo que recuerdes.',
+          'Usa flashcards (Anki, Quizlet).',
+          'Resuelve ejercicios SIN mirar la solución.',
+          'Cada error es información: anótalo.']},
+  CORNELL:{id:'cornell', nombre:'Método Cornell', icono:'📝',
+    descripcion:'Divide la hoja en 3 zonas: notas, palabras clave y resumen.',
+    tips:['Izquierda (preguntas), derecha (detalle), abajo (resumen 3 líneas).',
+          'Llena el resumen en las primeras 24h después de la clase.',
+          'Las palabras clave son tus futuros prompts de auto-evaluación.']},
 };
 
 const TIPS_ANTI_PROCRASTINACION = [
-  '⏱️ Regla de los 2 minutos: si vas a postergar, comprométete solo a 2 min. Casi siempre seguirás.',
-  '📵 Deja el celular fuera de la habitación o en modo avión durante los bloques de estudio.',
-  '🎯 Define UNA meta concreta por bloque ("resolver 5 ejercicios", no "estudiar Cálculo").',
-  '💧 Hidrátate y come algo antes de empezar — el hambre/sed se disfraza de distracción.',
-  '🌙 Si llevas 2 días sin cumplir, NO te castigues: ajusta a la baja la meta. Sostenibilidad > intensidad.',
+  '⏱️ Regla de los 2 minutos: si vas a postergar, comprométete solo a 2 min.',
+  '📵 Deja el celular fuera de la habitación durante los bloques de estudio.',
+  '🎯 Define UNA meta concreta por bloque ("resolver 5 ejercicios").',
+  '💧 Hidrátate y come algo antes de empezar.',
+  '🌙 Si llevas 2 días sin cumplir, ajusta la meta. Sostenibilidad > intensidad.',
 ];
 
-function sugerirMetodos(opcion, asignaturas) {
-  const sesiones = Object.values(opcion.dias).flat().filter(ev => ev.tipo === 'estudio');
-  if (sesiones.length === 0) return [];
-  const promedio = sesiones.reduce((a,s) => a+s.duracionMin, 0) / sesiones.length;
-  const cortas = sesiones.filter(s => s.duracionMin <= 30).length;
-  const largas = sesiones.filter(s => s.duracionMin >= 60).length;
-  const propCortas = cortas / sesiones.length;
-  const difMax = Math.max(...asignaturas.map(a => a.dificultad));
-  const hayDificil = asignaturas.some(a => a.dificultad >= 4);
-  const hayMemoria = asignaturas.some(a => /estad|histor|anatom|derecho|idiom/i.test(a.nombre));
-
-  const sug = [];
-  if (propCortas > 0.5) sug.push({ ...CATALOGO_METODOS.POMODORO, score: 0.95,
-    razon: `Tu rutina tiene ${cortas} sesiones cortas (≤30 min). Pomodoro está hecho para este patrón.` });
-  if (largas >= 3 && promedio >= 50) sug.push({ ...CATALOGO_METODOS.TIME_BLOCKING, score: 0.90,
-    razon: `Detecté ${largas} bloques largos (≥60 min): perfectos para foco profundo.` });
-  if (hayDificil) sug.push({ ...CATALOGO_METODOS.FEYNMAN, score: 0.85,
-    razon: `Tienes ramos con dificultad ${difMax}/5. Feynman expone los huecos reales de comprensión.` });
-  if (hayMemoria || asignaturas.length >= 4) sug.push({ ...CATALOGO_METODOS.ACTIVE_RECALL, score: 0.80,
-    razon: 'Con varias asignaturas o contenidos memorísticos, el repaso espaciado evita el olvido a 1 semana.' });
-  sug.push({ ...CATALOGO_METODOS.CORNELL, score: 0.60,
-    razon: 'Útil para procesar las clases del día mismo, antes de olvidar el contexto.' });
-
-  return sug.sort((a,b) => b.score - a.score).slice(0, 3);
+function sugerirMetodos(opcion, asignaturas){
+  const sesiones=Object.values(opcion.dias).flat().filter(ev=>ev.tipo==='estudio');
+  if(sesiones.length===0) return [];
+  const promedio=sesiones.reduce((a,s)=>a+s.duracionMin,0)/sesiones.length;
+  const cortas=sesiones.filter(s=>s.duracionMin<=30).length;
+  const largas=sesiones.filter(s=>s.duracionMin>=60).length;
+  const propCortas=cortas/sesiones.length;
+  const difMax=Math.max(...asignaturas.map(a=>a.dificultad));
+  const hayDificil=asignaturas.some(a=>a.dificultad>=4);
+  const hayMemoria=asignaturas.some(a=>/estad|histor|anatom|derecho|idiom/i.test(a.nombre));
+  const sug=[];
+  if(propCortas>0.5) sug.push({...CATALOGO_METODOS.POMODORO, score:0.95, razon:`Tu rutina tiene ${cortas} sesiones cortas (≤30 min). Pomodoro está hecho para este patrón.`});
+  if(largas>=3 && promedio>=50) sug.push({...CATALOGO_METODOS.TIME_BLOCKING, score:0.90, razon:`Detecté ${largas} bloques largos (≥60 min): perfectos para foco profundo.`});
+  if(hayDificil) sug.push({...CATALOGO_METODOS.FEYNMAN, score:0.85, razon:`Tienes ramos con dificultad ${difMax}/5. Feynman expone los huecos reales.`});
+  if(hayMemoria || asignaturas.length>=4) sug.push({...CATALOGO_METODOS.ACTIVE_RECALL, score:0.80, razon:'Con varias asignaturas, el repaso espaciado evita el olvido.'});
+  sug.push({...CATALOGO_METODOS.CORNELL, score:0.60, razon:'Útil para procesar las clases del día mismo.'});
+  return sug.sort((a,b)=>b.score-a.score).slice(0,3);
 }
 
-/* ============================================================================
-   VISTA GRID  +  DRAG & DROP
-   ========================================================================= */
-const GRID_HORA_INICIO = 7;
-const GRID_HORA_FIN = 23;
-const GRID_SLOT_MIN = 30;
-const GRID_SLOTS_POR_HORA = 60 / GRID_SLOT_MIN;
-const GRID_TOTAL_SLOTS = (GRID_HORA_FIN - GRID_HORA_INICIO) * GRID_SLOTS_POR_HORA;
+/* ====== VISTA GRID + DRAG & DROP ====== */
+const GRID_HORA_INICIO=7, GRID_HORA_FIN=23, GRID_SLOT_MIN=30;
+const GRID_SLOTS_POR_HORA=60/GRID_SLOT_MIN;
+const GRID_TOTAL_SLOTS=(GRID_HORA_FIN-GRID_HORA_INICIO)*GRID_SLOTS_POR_HORA;
 
-function minutosASlot(minutos) {
-  return Math.max(0, Math.round((minutos - GRID_HORA_INICIO * 60) / GRID_SLOT_MIN));
-}
-function slotAMinutos(slot) {
-  return GRID_HORA_INICIO * 60 + slot * GRID_SLOT_MIN;
-}
+function minutosASlot(mins){return Math.max(0, Math.round((mins-GRID_HORA_INICIO*60)/GRID_SLOT_MIN));}
+function slotAMinutos(slot){return GRID_HORA_INICIO*60+slot*GRID_SLOT_MIN;}
 
-function renderGrid(opcion, idxOpcion) {
-  const wrap = document.createElement('div');
-  wrap.className = 'sb-grid-wrapper';
-  wrap.dataset.opcion = idxOpcion;
-
-  const header = document.createElement('div');
-  header.className = 'sb-grid-header';
-  header.innerHTML = `<div></div>` + DIAS_SEMANA.map(d => `<div class="sb-grid-dia">${d}</div>`).join('');
+function renderGrid(opcion, idxOpcion){
+  const wrap=document.createElement('div'); wrap.className='sb-grid-wrapper'; wrap.dataset.opcion=idxOpcion;
+  const header=document.createElement('div'); header.className='sb-grid-header';
+  header.innerHTML=`<div></div>`+DIAS_SEMANA.map(d=>`<div class="sb-grid-dia">${d}</div>`).join('');
   wrap.appendChild(header);
-
-  const grid = document.createElement('div');
-  grid.className = 'sb-grid';
-  grid.style.gridTemplateRows = `repeat(${GRID_TOTAL_SLOTS}, 28px)`;
-
-  for (let h = GRID_HORA_INICIO; h < GRID_HORA_FIN; h++) {
-    const c = document.createElement('div');
-    c.className = 'sb-grid-hora';
-    c.style.gridColumn = '1';
-    c.style.gridRow = `${(h - GRID_HORA_INICIO) * GRID_SLOTS_POR_HORA + 1} / span ${GRID_SLOTS_POR_HORA}`;
-    c.textContent = `${String(h).padStart(2,'0')}:00`;
-    grid.appendChild(c);
+  const grid=document.createElement('div'); grid.className='sb-grid';
+  grid.style.gridTemplateRows=`repeat(${GRID_TOTAL_SLOTS}, 28px)`;
+  for(let h=GRID_HORA_INICIO; h<GRID_HORA_FIN; h++){
+    const c=document.createElement('div'); c.className='sb-grid-hora';
+    c.style.gridColumn='1';
+    c.style.gridRow=`${(h-GRID_HORA_INICIO)*GRID_SLOTS_POR_HORA+1} / span ${GRID_SLOTS_POR_HORA}`;
+    c.textContent=`${String(h).padStart(2,'0')}:00`; grid.appendChild(c);
   }
-  DIAS_SEMANA.forEach((dia, col) => {
-    for (let s = 0; s < GRID_TOTAL_SLOTS; s++) {
-      const c = document.createElement('div');
-      c.className = `sb-grid-slot ${s % GRID_SLOTS_POR_HORA === 0 ? 'borde-hora' : ''}`;
-      c.style.gridColumn = `${col + 2}`;
-      c.style.gridRow = `${s + 1}`;
-      c.dataset.dia = dia;
-      c.dataset.slot = s;
+  DIAS_SEMANA.forEach((dia,col)=>{
+    for(let s=0; s<GRID_TOTAL_SLOTS; s++){
+      const c=document.createElement('div');
+      c.className=`sb-grid-slot ${s%GRID_SLOTS_POR_HORA===0?'borde-hora':''}`;
+      c.style.gridColumn=`${col+2}`; c.style.gridRow=`${s+1}`;
+      c.dataset.dia=dia; c.dataset.slot=s;
       grid.appendChild(c);
     }
   });
-  DIAS_SEMANA.forEach((dia, col) => {
-    (opcion.dias[dia] || []).forEach((ev, evIdx) => {
-      const slotI = minutosASlot(ev.inicioMin);
-      const slotF = minutosASlot(ev.finMin);
-      const span = Math.max(1, slotF - slotI);
-      const difAlta = ev.tipo === 'estudio' && ev.dificultad >= 4 ? 'dif-alta' : '';
-      const fijoCls = !ev.movible ? 'sb-bloque--fijo' : '';
-      const bloque = document.createElement('div');
-      bloque.className = `sb-bloque sb-bloque--${ev.tipo} ${difAlta} ${fijoCls}`;
-      bloque.style.gridColumn = `${col + 2}`;
-      bloque.style.gridRow = `${slotI + 1} / span ${span}`;
-      bloque.setAttribute('role','button');
-      bloque.setAttribute('tabindex','0');
+  DIAS_SEMANA.forEach((dia,col)=>{
+    (opcion.dias[dia]||[]).forEach((ev,evIdx)=>{
+      const slotI=minutosASlot(ev.inicioMin);
+      const slotF=minutosASlot(ev.finMin);
+      const span=Math.max(1, slotF-slotI);
+      const difAlta = ev.tipo==='estudio' && ev.dificultad>=4 ? 'dif-alta':'';
+      const fijoCls = !ev.movible ? 'sb-bloque--fijo':'';
+      const bloque=document.createElement('div');
+      bloque.className=`sb-bloque sb-bloque--${ev.tipo} ${difAlta} ${fijoCls}`;
+      bloque.style.gridColumn=`${col+2}`;
+      bloque.style.gridRow=`${slotI+1} / span ${span}`;
+      bloque.setAttribute('role','button'); bloque.setAttribute('tabindex','0');
       bloque.setAttribute('aria-label', `${ev.actividad}, ${ev.bloqueHorario}, ${ev.detalle}`);
       bloque.title = ev.movible
-        ? `${ev.actividad}\n${ev.bloqueHorario}\n${ev.detalle}\n\n🖱️ Arrastrar para mover`
+        ? `${ev.actividad}\n${ev.bloqueHorario}\n${ev.detalle}\n\n🖱️ Arrastra para mover`
         : `${ev.actividad}\n${ev.bloqueHorario}\n${ev.detalle}\n\n🔒 Bloque fijo`;
       bloque.draggable = !!ev.movible;
-      bloque.dataset.opcion = idxOpcion;
-      bloque.dataset.dia = dia;
-      bloque.dataset.idx = evIdx;
-      bloque.innerHTML = `
+      bloque.dataset.opcion=idxOpcion; bloque.dataset.dia=dia; bloque.dataset.idx=evIdx;
+      bloque.innerHTML=`
         <div class="sb-bloque__titulo">${ev.actividad}</div>
         <div class="sb-bloque__hora">${ev.bloqueHorario}</div>
-        ${span >= 3 ? `<div class="sb-bloque__detalle">${ev.detalle}</div>` : ''}
-      `;
+        ${span>=3?`<div class="sb-bloque__detalle">${ev.detalle}</div>`:''}`;
       grid.appendChild(bloque);
     });
   });
@@ -776,517 +540,386 @@ function renderGrid(opcion, idxOpcion) {
   return wrap;
 }
 
-/* ---- Drag & Drop ---- */
-let DRAG_STATE = null;
-
-function configurarDragDrop(contenedor) {
-  contenedor.querySelectorAll('.sb-bloque[draggable="true"]').forEach(b => {
+let DRAG_STATE=null;
+function configurarDragDrop(contenedor){
+  contenedor.querySelectorAll('.sb-bloque[draggable="true"]').forEach(b=>{
     b.addEventListener('dragstart', onDragStart);
     b.addEventListener('dragend', onDragEnd);
   });
-  contenedor.querySelectorAll('.sb-grid-slot').forEach(s => {
+  contenedor.querySelectorAll('.sb-grid-slot').forEach(s=>{
     s.addEventListener('dragover', onDragOver);
     s.addEventListener('dragleave', onDragLeave);
     s.addEventListener('drop', onDrop);
   });
 }
-
-function onDragStart(e) {
-  DRAG_STATE = {
-    opcion: +this.dataset.opcion,
-    dia: this.dataset.dia,
-    idx: +this.dataset.idx,
-  };
+function onDragStart(e){
+  DRAG_STATE={opcion:+this.dataset.opcion, dia:this.dataset.dia, idx:+this.dataset.idx};
   this.classList.add('dragging');
-  e.dataTransfer.effectAllowed = 'move';
-  try { e.dataTransfer.setData('text/plain', 'mover'); } catch(_) {}
+  e.dataTransfer.effectAllowed='move';
+  try{e.dataTransfer.setData('text/plain','mover');}catch(_){}
 }
-function onDragEnd() {
+function onDragEnd(){
   this.classList.remove('dragging');
-  document.querySelectorAll('.sb-grid-slot').forEach(s => s.classList.remove('drop-target','drop-invalid'));
-  DRAG_STATE = null;
+  document.querySelectorAll('.sb-grid-slot').forEach(s=>s.classList.remove('drop-target','drop-invalid'));
+  DRAG_STATE=null;
 }
-function onDragOver(e) {
-  if (!DRAG_STATE) return;
+function onDragOver(e){
+  if(!DRAG_STATE) return;
   e.preventDefault();
-  e.dataTransfer.dropEffect = 'move';
-  const ok = validarDrop(this.dataset.dia, +this.dataset.slot);
+  e.dataTransfer.dropEffect='move';
+  const ok=validarDrop(this.dataset.dia, +this.dataset.slot);
   this.classList.remove('drop-target','drop-invalid');
-  this.classList.add(ok ? 'drop-target' : 'drop-invalid');
+  this.classList.add(ok?'drop-target':'drop-invalid');
 }
-function onDragLeave() {
-  this.classList.remove('drop-target','drop-invalid');
-}
-function onDrop(e) {
-  if (!DRAG_STATE) return;
+function onDragLeave(){this.classList.remove('drop-target','drop-invalid');}
+function onDrop(e){
+  if(!DRAG_STATE) return;
   e.preventDefault();
-  const nuevoDia = this.dataset.dia;
-  const nuevoSlot = +this.dataset.slot;
-  if (!validarDrop(nuevoDia, nuevoSlot)) {
-    mostrarToast('⚠️ No se puede soltar ahí (hay solape o se sale del horario).');
+  const nuevoDia=this.dataset.dia, nuevoSlot=+this.dataset.slot;
+  if(!validarDrop(nuevoDia, nuevoSlot)){
+    mostrarToast('⚠️ No se puede soltar ahí (solape o fuera de horario).');
     return;
   }
   moverBloque(DRAG_STATE.opcion, DRAG_STATE.dia, DRAG_STATE.idx, nuevoDia, nuevoSlot);
 }
-
-function validarDrop(nuevoDia, nuevoSlot) {
-  if (!DRAG_STATE || !RESULTADO_ACTUAL) return false;
-  const op = RESULTADO_ACTUAL.opciones[DRAG_STATE.opcion];
-  const ev = op.dias[DRAG_STATE.dia][DRAG_STATE.idx];
-  if (!ev) return false;
-  const dur = ev.duracionMin;
-  const nuevoInicio = slotAMinutos(nuevoSlot);
-  const nuevoFin = nuevoInicio + dur;
-  if (nuevoFin > GRID_HORA_FIN * 60) return false;
-  // Revisar solape con TODOS los eventos del nuevo día (excepto el propio si es mismo día)
-  const eventosDia = op.dias[nuevoDia] || [];
-  return !eventosDia.some((otro, i) => {
-    if (nuevoDia === DRAG_STATE.dia && i === DRAG_STATE.idx) return false;
+function validarDrop(nuevoDia, nuevoSlot){
+  if(!DRAG_STATE || !RESULTADO_ACTUAL) return false;
+  const op=RESULTADO_ACTUAL.opciones[DRAG_STATE.opcion];
+  const ev=op.dias[DRAG_STATE.dia][DRAG_STATE.idx];
+  if(!ev) return false;
+  const dur=ev.duracionMin;
+  const nuevoInicio=slotAMinutos(nuevoSlot);
+  const nuevoFin=nuevoInicio+dur;
+  if(nuevoFin > GRID_HORA_FIN*60) return false;
+  const eventosDia=op.dias[nuevoDia]||[];
+  return !eventosDia.some((otro,i)=>{
+    if(nuevoDia===DRAG_STATE.dia && i===DRAG_STATE.idx) return false;
     return nuevoInicio < otro.finMin && nuevoFin > otro.inicioMin;
   });
 }
-
-function moverBloque(idxOpcion, viejoDia, viejoIdx, nuevoDia, nuevoSlot) {
-  const op = RESULTADO_ACTUAL.opciones[idxOpcion];
-  const ev = op.dias[viejoDia][viejoIdx];
-  if (!ev) return;
-  const dur = ev.duracionMin;
-  const nuevoInicio = slotAMinutos(nuevoSlot);
-  const nuevoFin = nuevoInicio + dur;
-  const evMovido = {
-    ...ev,
-    inicioMin: nuevoInicio,
-    finMin: nuevoFin,
-    bloqueHorario: `${minutosAHora(nuevoInicio)} - ${minutosAHora(nuevoFin)}`,
-  };
-  op.dias[viejoDia].splice(viejoIdx, 1);
+function moverBloque(idxOpcion, viejoDia, viejoIdx, nuevoDia, nuevoSlot){
+  const op=RESULTADO_ACTUAL.opciones[idxOpcion];
+  const ev=op.dias[viejoDia][viejoIdx];
+  if(!ev) return;
+  const dur=ev.duracionMin;
+  const nuevoInicio=slotAMinutos(nuevoSlot);
+  const nuevoFin=nuevoInicio+dur;
+  const evMovido={...ev, inicioMin:nuevoInicio, finMin:nuevoFin, bloqueHorario:`${minutosAHora(nuevoInicio)} - ${minutosAHora(nuevoFin)}`};
+  op.dias[viejoDia].splice(viejoIdx,1);
   op.dias[nuevoDia].push(evMovido);
-  op.dias[nuevoDia].sort((a,b) => a.inicioMin - b.inicioMin);
+  op.dias[nuevoDia].sort((a,b)=>a.inicioMin-b.inicioMin);
   pintarResultados(RESULTADO_ACTUAL);
   cambiarTab(idxOpcion);
   mostrarToast(`✅ Movido a ${nuevoDia} ${minutosAHora(nuevoInicio)}`);
 }
-
-function mostrarToast(msg) {
-  let t = document.getElementById('sb-toast');
-  if (!t) {
-    t = document.createElement('div');
-    t.id = 'sb-toast';
-    t.style.cssText = `position:fixed;bottom:20px;left:50%;transform:translateX(-50%);
-      background:var(--sb-surface);color:var(--sb-text);padding:0.7rem 1.2rem;border-radius:10px;
-      border:1px solid var(--sb-border);box-shadow:0 4px 12px rgba(0,0,0,0.3);z-index:9999;
-      font-size:0.9rem;font-weight:600;transition:opacity 0.3s;`;
+function mostrarToast(msg){
+  let t=document.getElementById('sb-toast');
+  if(!t){
+    t=document.createElement('div'); t.id='sb-toast';
+    t.style.cssText=`position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:var(--sb-surface);color:var(--sb-text);padding:.7rem 1.2rem;border-radius:10px;border:1px solid var(--sb-border);box-shadow:0 4px 12px rgba(0,0,0,.3);z-index:9999;font-size:.9rem;font-weight:600;transition:opacity .3s;`;
     document.body.appendChild(t);
   }
-  t.textContent = msg; t.style.opacity = '1';
+  t.textContent=msg; t.style.opacity='1';
   clearTimeout(t._timer);
-  t._timer = setTimeout(() => { t.style.opacity = '0'; }, 2200);
+  t._timer=setTimeout(()=>{t.style.opacity='0';},2200);
 }
 
-function renderListaDia(dia, eventos) {
-  if (!eventos || eventos.length === 0) return '';
-  return `
-    <div class="dia-titulo">${dia}</div>
+function renderListaDia(dia, eventos){
+  if(!eventos||eventos.length===0) return '';
+  return `<div class="dia-titulo">${dia}</div>
     <table>
       <thead><tr><th>Bloque horario</th><th>Actividad</th><th>Detalle</th></tr></thead>
-      <tbody>
-        ${eventos.map(ev => `<tr class="${ev.tipo}">
-          <td>${ev.bloqueHorario}</td>
-          <td>${ev.actividad}</td>
-          <td>${ev.detalle}</td>
-        </tr>`).join('')}
-      </tbody>
-    </table>
-  `;
+      <tbody>${eventos.map(ev=>`<tr class="${ev.tipo}"><td>${ev.bloqueHorario}</td><td>${ev.actividad}</td><td>${ev.detalle}</td></tr>`).join('')}</tbody>
+    </table>`;
+}
+function renderMetodos(metodos){
+  if(!metodos||metodos.length===0) return '';
+  return `<div class="card" style="margin-top:1rem;">
+    <h2>💡 Métodos de estudio recomendados</h2>
+    <p class="descripcion">Análisis basado en la densidad de tus bloques y la dificultad de tus ramos.</p>
+    <div class="sb-metodos">
+      ${metodos.map(m=>`<article class="sb-metodo" tabindex="0">
+        <header><span class="sb-metodo__icono">${m.icono}</span><h4>${m.nombre}</h4><span class="sb-metodo__score">${Math.round(m.score*100)}% match</span></header>
+        <p class="sb-metodo__razon"><strong>¿Por qué?</strong> ${m.razon}</p>
+        <p>${m.descripcion}</p>
+        <details><summary>Tips prácticos (${m.tips.length})</summary><ul>${m.tips.map(t=>`<li>${t}</li>`).join('')}</ul></details>
+      </article>`).join('')}
+    </div></div>`;
+}
+function renderTipsUniversales(){
+  return `<div class="card sb-tips-card">
+    <h2>🛡️ Tips anti-procrastinación (siempre vigentes)</h2>
+    <ul>${TIPS_ANTI_PROCRASTINACION.map(t=>`<li>${t}</li>`).join('')}</ul>
+  </div>`;
+}
+function renderLeyenda(){
+  return `<div class="sb-leyenda" aria-label="Leyenda de colores">
+    <span><span class="swatch" style="background:var(--sb-estudio-bg)"></span>Estudio</span>
+    <span><span class="swatch" style="background:var(--sb-estudio-fuerte-bg)"></span>Dificultad alta</span>
+    <span><span class="swatch" style="background:var(--sb-pausa-bg)"></span>Pausa</span>
+    <span><span class="swatch" style="background:var(--sb-autocuidado-bg)"></span>Autocuidado</span>
+    <span><span class="swatch" style="background:var(--sb-clase-bg)"></span>Clase fija</span>
+  </div>`;
 }
 
-function renderMetodos(metodos) {
-  if (!metodos || metodos.length === 0) return '';
-  return `
-    <div class="card" style="margin-top:1rem;">
-      <h2>💡 Métodos de estudio recomendados</h2>
-      <p class="descripcion">Análisis basado en la densidad de tus bloques y la dificultad de tus ramos.</p>
-      <div class="sb-metodos">
-        ${metodos.map(m => `
-          <article class="sb-metodo" tabindex="0">
-            <header>
-              <span class="sb-metodo__icono">${m.icono}</span>
-              <h4>${m.nombre}</h4>
-              <span class="sb-metodo__score">${Math.round(m.score * 100)}% match</span>
-            </header>
-            <p class="sb-metodo__razon"><strong>¿Por qué?</strong> ${m.razon}</p>
-            <p>${m.descripcion}</p>
-            <details>
-              <summary>Tips prácticos (${m.tips.length})</summary>
-              <ul>${m.tips.map(t => `<li>${t}</li>`).join('')}</ul>
-            </details>
-          </article>
-        `).join('')}
-      </div>
-    </div>
-  `;
-}
-
-function renderTipsUniversales() {
-  return `
-    <div class="card sb-tips-card">
-      <h2>🛡️ Tips anti-procrastinación (siempre vigentes)</h2>
-      <ul>${TIPS_ANTI_PROCRASTINACION.map(t => `<li>${t}</li>`).join('')}</ul>
-    </div>
-  `;
-}
-
-function renderLeyenda() {
-  return `
-    <div class="sb-leyenda" aria-label="Leyenda de colores">
-      <span><span class="swatch" style="background:var(--sb-estudio-bg)"></span>Estudio</span>
-      <span><span class="swatch" style="background:var(--sb-estudio-fuerte-bg)"></span>Dificultad alta</span>
-      <span><span class="swatch" style="background:var(--sb-pausa-bg)"></span>Pausa</span>
-      <span><span class="swatch" style="background:var(--sb-autocuidado-bg)"></span>Autocuidado</span>
-      <span><span class="swatch" style="background:var(--sb-clase-bg)"></span>Clase fija</span>
-    </div>
-  `;
-}
-
-/* ============================================================================
-   FORMULARIO
-   ========================================================================= */
-function agregarOcupacion(valores) {
-  const cont = document.getElementById('ocupaciones-container');
-  const row = document.createElement('div');
-  row.className = 'ocupacion-row';
-  const v = valores || { dia:'Lunes', inicio:'08:30', fin:'10:00', etiqueta:'Clase' };
-  row.innerHTML = `
-    <select class="oc-dia">${DIAS_SEMANA.map(d => `<option ${d===v.dia?'selected':''}>${d}</option>`).join('')}</select>
+/* ====== FORMULARIO ====== */
+function agregarOcupacion(valores){
+  const cont=document.getElementById('ocupaciones-container');
+  const row=document.createElement('div'); row.className='ocupacion-row';
+  const v=valores||{dia:'Lunes', inicio:'08:30', fin:'10:00', etiqueta:'Clase'};
+  row.innerHTML=`
+    <select class="oc-dia">${DIAS_SEMANA.map(d=>`<option ${d===v.dia?'selected':''}>${d}</option>`).join('')}</select>
     <input type="time" class="oc-inicio" value="${v.inicio}">
     <input type="time" class="oc-fin" value="${v.fin}">
     <input type="text" class="oc-etiqueta" placeholder="Ej: Cálculo I, Almuerzo..." value="${v.etiqueta}">
-    <button class="remove" onclick="this.closest('.ocupacion-row').remove()" type="button" aria-label="Eliminar">✕</button>
-  `;
+    <button class="remove" onclick="this.closest('.ocupacion-row').remove()" type="button" aria-label="Eliminar">✕</button>`;
   cont.appendChild(row);
 }
-
-function agregarRamo(valores) {
-  const cont = document.getElementById('ramos-container');
-  const row = document.createElement('div');
-  row.className = 'ramo-row';
-  const v = valores || { nombre:'', dificultad:3 };
-  row.innerHTML = `
+function agregarRamo(valores){
+  const cont=document.getElementById('ramos-container');
+  const row=document.createElement('div'); row.className='ramo-row';
+  const v=valores||{nombre:'', dificultad:3};
+  row.innerHTML=`
     <input type="text" class="ramo-nombre" placeholder="Ej: Cálculo I" value="${v.nombre}">
     <select class="ramo-dificultad">
-      ${[1,2,3,4,5].map(n => `<option value="${n}" ${n===v.dificultad?'selected':''}>Dificultad ${n}${n===1?' (fácil)':n===5?' (difícil)':''}</option>`).join('')}
+      ${[1,2,3,4,5].map(n=>`<option value="${n}" ${n===v.dificultad?'selected':''}>Dificultad ${n}${n===1?' (fácil)':n===5?' (difícil)':''}</option>`).join('')}
     </select>
-    <button class="remove" onclick="this.closest('.ramo-row').remove()" type="button" aria-label="Eliminar">✕</button>
-  `;
+    <button class="remove" onclick="this.closest('.ramo-row').remove()" type="button" aria-label="Eliminar">✕</button>`;
   cont.appendChild(row);
 }
-
-function leerOcupaciones() {
-  return [...document.querySelectorAll('.ocupacion-row')].map(r => ({
-    dia: r.querySelector('.oc-dia').value,
-    inicio: r.querySelector('.oc-inicio').value,
-    fin: r.querySelector('.oc-fin').value,
-    etiqueta: r.querySelector('.oc-etiqueta').value || 'Ocupado',
-    tipo: 'fijo',
-  })).filter(o => o.inicio && o.fin && o.inicio !== o.fin);
+function leerOcupaciones(){
+  return [...document.querySelectorAll('.ocupacion-row')].map(r=>({
+    dia:r.querySelector('.oc-dia').value,
+    inicio:r.querySelector('.oc-inicio').value,
+    fin:r.querySelector('.oc-fin').value,
+    etiqueta:r.querySelector('.oc-etiqueta').value||'Ocupado',
+    tipo:'fijo'
+  })).filter(o=>o.inicio&&o.fin&&o.inicio!==o.fin);
 }
-function leerAsignaturas() {
-  return [...document.querySelectorAll('.ramo-row')].map((r,i) => ({
-    id: 'ramo_'+i,
-    nombre: r.querySelector('.ramo-nombre').value.trim(),
-    dificultad: parseInt(r.querySelector('.ramo-dificultad').value, 10),
-  })).filter(r => r.nombre.length > 0);
+function leerAsignaturas(){
+  return [...document.querySelectorAll('.ramo-row')].map((r,i)=>({
+    id:'ramo_'+i,
+    nombre:r.querySelector('.ramo-nombre').value.trim(),
+    dificultad:parseInt(r.querySelector('.ramo-dificultad').value,10)
+  })).filter(r=>r.nombre.length>0);
 }
 
-/* ============================================================================
-   IMPORTAR DESDE EXCEL/CSV   (con auto-detección de dificultad)
-   ========================================================================= */
-const norm = (s) => String(s || '').toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,'').trim();
+/* ====== IMPORTAR EXCEL / CSV ====== */
+const norm=(s)=>String(s||'').toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,'').trim();
 
-function importarArchivo(event) {
-  const file = event.target.files[0];
-  if (!file) return;
-  const feedback = document.getElementById('import-feedback');
-  feedback.innerHTML = '';
-  const ext = file.name.split('.').pop().toLowerCase();
-
-  if (ext === 'csv') {
-    Papa.parse(file, {
-      header: true, skipEmptyLines: true,
-      complete: (res) => procesarFilasImportadas({ ocupaciones: res.data, asignaturas: res.data }, feedback),
-      error: (e) => { feedback.innerHTML = `<div class="error-box">⚠️ Error CSV: ${e.message}</div>`; },
-    });
-  } else if (ext === 'xlsx' || ext === 'xls') {
-    const reader = new FileReader();
-    reader.onload = (e) => {
-      try {
-        const wb = XLSX.read(e.target.result, { type: 'array' });
-        // ⭐ Detectar hoja específica de asignaturas/ramos
-        let filasOcup = [];
-        let filasAsig = [];
-        const nombresHojas = wb.SheetNames.map(n => ({ orig:n, norm:norm(n) }));
-        const hojaAsigObj = nombresHojas.find(h => /asignatur|ramo|dificultad|materia/.test(h.norm));
-        const hojaPrincipal = wb.SheetNames[0];
-        filasOcup = XLSX.utils.sheet_to_json(wb.Sheets[hojaPrincipal]);
-        if (hojaAsigObj && hojaAsigObj.orig !== hojaPrincipal) {
-          filasAsig = XLSX.utils.sheet_to_json(wb.Sheets[hojaAsigObj.orig]);
-        } else {
-          filasAsig = filasOcup; // mismas filas pueden traer columnas extra
-        }
-        procesarFilasImportadas({ ocupaciones: filasOcup, asignaturas: filasAsig }, feedback);
-      } catch (err) {
-        feedback.innerHTML = `<div class="error-box">⚠️ Error Excel: ${err.message}</div>`;
+function importarArchivo(event){
+  const file=event.target.files[0]; if(!file) return;
+  const feedback=document.getElementById('import-feedback'); feedback.innerHTML='';
+  const ext=file.name.split('.').pop().toLowerCase();
+  if(ext==='csv'){
+    Papa.parse(file, {header:true, skipEmptyLines:true,
+      complete:(res)=>procesarFilasImportadas({ocupaciones:res.data, asignaturas:res.data}, feedback),
+      error:(e)=>{feedback.innerHTML=`<div class="error-box">⚠️ Error CSV: ${e.message}</div>`;}});
+  } else if(ext==='xlsx'||ext==='xls'){
+    const reader=new FileReader();
+    reader.onload=(e)=>{
+      try{
+        const wb=XLSX.read(e.target.result, {type:'array'});
+        const nombresHojas=wb.SheetNames.map(n=>({orig:n, norm:norm(n)}));
+        const hojaAsigObj=nombresHojas.find(h=>/asignatur|ramo|dificultad|materia/.test(h.norm));
+        const hojaPrincipal=wb.SheetNames[0];
+        const filasOcup=XLSX.utils.sheet_to_json(wb.Sheets[hojaPrincipal]);
+        const filasAsig=(hojaAsigObj && hojaAsigObj.orig!==hojaPrincipal)
+          ? XLSX.utils.sheet_to_json(wb.Sheets[hojaAsigObj.orig]) : filasOcup;
+        procesarFilasImportadas({ocupaciones:filasOcup, asignaturas:filasAsig}, feedback);
+      } catch(err){
+        feedback.innerHTML=`<div class="error-box">⚠️ Error Excel: ${err.message}</div>`;
       }
     };
     reader.readAsArrayBuffer(file);
   } else {
-    feedback.innerHTML = `<div class="error-box">⚠️ Formato no soportado. Usa CSV, XLSX o XLS.</div>`;
+    feedback.innerHTML=`<div class="error-box">⚠️ Formato no soportado. Usa CSV, XLSX o XLS.</div>`;
   }
-  event.target.value = '';
+  event.target.value='';
 }
 
-function procesarFilasImportadas({ ocupaciones: filasOcup, asignaturas: filasAsig }, feedback) {
-  if (!filasOcup.length && !filasAsig.length) {
-    feedback.innerHTML = `<div class="error-box">⚠️ Archivo vacío.</div>`; return;
-  }
-
-  // ----- 1) OCUPACIONES (clases / hábitos fijos) -----
-  const ocupaciones = [];
-  filasOcup.forEach(f => {
-    const obj = {};
-    Object.keys(f).forEach(k => obj[norm(k)] = f[k]);
-    const dia = String(obj.dia || obj['día'] || '').trim();
-    const inicio = String(obj.inicio || obj.desde || obj['hora inicio'] || '').trim();
-    const fin = String(obj.fin || obj.hasta || obj['hora fin'] || '').trim();
-    const etiqueta = String(obj.etiqueta || obj.actividad || obj.clase || obj.asignatura || 'Clase').trim();
-    const diaCap = DIAS_SEMANA.find(d => norm(d) === norm(dia));
-    if (diaCap && /^\d{1,2}:\d{2}$/.test(inicio) && /^\d{1,2}:\d{2}$/.test(fin)) {
-      ocupaciones.push({ dia: diaCap, inicio: inicio.padStart(5,'0'), fin: fin.padStart(5,'0'), etiqueta });
+function procesarFilasImportadas({ocupaciones:filasOcup, asignaturas:filasAsig}, feedback){
+  if(!filasOcup.length && !filasAsig.length){feedback.innerHTML=`<div class="error-box">⚠️ Archivo vacío.</div>`; return;}
+  const ocupaciones=[];
+  filasOcup.forEach(f=>{
+    const obj={}; Object.keys(f).forEach(k=>obj[norm(k)]=f[k]);
+    const dia=String(obj.dia||obj['día']||'').trim();
+    const inicio=String(obj.inicio||obj.desde||obj['hora inicio']||'').trim();
+    const fin=String(obj.fin||obj.hasta||obj['hora fin']||'').trim();
+    const etiqueta=String(obj.etiqueta||obj.actividad||obj.clase||obj.asignatura||'Clase').trim();
+    const diaCap=DIAS_SEMANA.find(d=>norm(d)===norm(dia));
+    if(diaCap && /^\d{1,2}:\d{2}$/.test(inicio) && /^\d{1,2}:\d{2}$/.test(fin)){
+      ocupaciones.push({dia:diaCap, inicio:inicio.padStart(5,'0'), fin:fin.padStart(5,'0'), etiqueta});
     }
   });
-
-  // ----- 2) ASIGNATURAS + DIFICULTAD (deduplicadas) -----
-  const mapaAsig = new Map();
-  filasAsig.forEach(f => {
-    const obj = {};
-    Object.keys(f).forEach(k => obj[norm(k)] = f[k]);
-    const nombre = String(obj.asignatura || obj.ramo || obj.materia || obj.clase || obj.etiqueta || '').trim();
-    const difRaw = obj.dificultad ?? obj.dif ?? obj.nivel;
-    const dif = parseInt(difRaw, 10);
-    if (nombre && !isNaN(dif) && dif >= 1 && dif <= 5) {
-      // si el mismo nombre aparece varias veces, nos quedamos con la dificultad máxima
-      const prev = mapaAsig.get(nombre.toLowerCase());
-      if (!prev || dif > prev.dificultad) mapaAsig.set(nombre.toLowerCase(), { nombre, dificultad: dif });
+  const mapaAsig=new Map();
+  filasAsig.forEach(f=>{
+    const obj={}; Object.keys(f).forEach(k=>obj[norm(k)]=f[k]);
+    const nombre=String(obj.asignatura||obj.ramo||obj.materia||obj.clase||obj.etiqueta||'').trim();
+    const difRaw=obj.dificultad ?? obj.dif ?? obj.nivel;
+    const dif=parseInt(difRaw,10);
+    if(nombre && !isNaN(dif) && dif>=1 && dif<=5){
+      const prev=mapaAsig.get(nombre.toLowerCase());
+      if(!prev || dif>prev.dificultad) mapaAsig.set(nombre.toLowerCase(),{nombre, dificultad:dif});
     }
   });
-  // Si no había columna dificultad, intentar inferir asignaturas únicas desde las etiquetas de clase
-  if (mapaAsig.size === 0) {
-    const blacklist = /almuerzo|descanso|cena|gimnasio|trabajo|deporte|reunion|reunión|despertar|dormir/i;
-    ocupaciones.forEach(o => {
-      if (!blacklist.test(o.etiqueta) && o.etiqueta.toLowerCase() !== 'clase') {
-        const k = o.etiqueta.toLowerCase();
-        if (!mapaAsig.has(k)) mapaAsig.set(k, { nombre: o.etiqueta, dificultad: 3 });
+  if(mapaAsig.size===0){
+    const blacklist=/almuerzo|descanso|cena|gimnasio|trabajo|deporte|reunion|reunión|despertar|dormir/i;
+    ocupaciones.forEach(o=>{
+      if(!blacklist.test(o.etiqueta) && o.etiqueta.toLowerCase()!=='clase'){
+        const k=o.etiqueta.toLowerCase();
+        if(!mapaAsig.has(k)) mapaAsig.set(k,{nombre:o.etiqueta, dificultad:3});
       }
     });
   }
-
-  // ----- 3) APLICAR AL FORMULARIO -----
-  if (ocupaciones.length === 0 && mapaAsig.size === 0) {
-    feedback.innerHTML = `<div class="error-box">⚠️ No se pudo importar nada. Verifica columnas: <code>dia, inicio, fin, etiqueta</code> y/o <code>asignatura, dificultad</code>.</div>`;
+  if(ocupaciones.length===0 && mapaAsig.size===0){
+    feedback.innerHTML=`<div class="error-box">⚠️ No se pudo importar nada. Verifica columnas: <code>dia, inicio, fin, etiqueta</code> y/o <code>asignatura, dificultad</code>.</div>`;
     return;
   }
-
-  if (ocupaciones.length > 0) {
-    document.getElementById('ocupaciones-container').innerHTML = '';
-    ocupaciones.forEach(o => agregarOcupacion(o));
+  if(ocupaciones.length>0){
+    document.getElementById('ocupaciones-container').innerHTML='';
+    ocupaciones.forEach(o=>agregarOcupacion(o));
   }
-  if (mapaAsig.size > 0) {
-    document.getElementById('ramos-container').innerHTML = '';
-    [...mapaAsig.values()].forEach(a => agregarRamo(a));
+  if(mapaAsig.size>0){
+    document.getElementById('ramos-container').innerHTML='';
+    [...mapaAsig.values()].forEach(a=>agregarRamo(a));
   }
-
-  const partes = [];
-  if (ocupaciones.length) partes.push(`${ocupaciones.length} ocupaciones`);
-  if (mapaAsig.size) partes.push(`${mapaAsig.size} asignaturas con dificultad`);
-  feedback.innerHTML = `<div class="success-box">✅ Importadas ${partes.join(' y ')}.</div>`;
+  const partes=[];
+  if(ocupaciones.length) partes.push(`${ocupaciones.length} ocupaciones`);
+  if(mapaAsig.size) partes.push(`${mapaAsig.size} asignaturas con dificultad`);
+  feedback.innerHTML=`<div class="success-box">✅ Importadas ${partes.join(' y ')}.</div>`;
 }
 
-/* ============================================================================
-   FAVORITOS (localStorage)
-   ========================================================================= */
-const STORAGE_KEY = 'studybalance_favoritos_v3';
-
-function obtenerFavoritos() {
-  try { return JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}'); }
-  catch { return {}; }
+/* ====== FAVORITOS ====== */
+const STORAGE_KEY='studybalance_favoritos_v3';
+function obtenerFavoritos(){try{return JSON.parse(localStorage.getItem(STORAGE_KEY)||'{}');}catch{return {};}}
+function refrescarSelectorFavoritos(){
+  const sel=document.getElementById('favoritos-select');
+  const favs=obtenerFavoritos();
+  sel.innerHTML='<option value="">— Cargar favorito —</option>'+
+    Object.keys(favs).map(k=>`<option value="${k}">${k}</option>`).join('');
 }
-function refrescarSelectorFavoritos() {
-  const sel = document.getElementById('favoritos-select');
-  const favs = obtenerFavoritos();
-  sel.innerHTML = '<option value="">— Cargar favorito —</option>' +
-    Object.keys(favs).map(k => `<option value="${k}">${k}</option>`).join('');
-}
-function guardarFavorito() {
-  const nombre = prompt('Nombre del favorito:', `Rutina ${new Date().toLocaleDateString()}`);
-  if (!nombre) return;
-  const favs = obtenerFavoritos();
-  favs[nombre] = {
-    ocupaciones: leerOcupaciones(),
-    asignaturas: leerAsignaturas(),
-    guardadoEn: new Date().toISOString(),
-  };
+function guardarFavorito(){
+  const nombre=prompt('Nombre del favorito:', `Rutina ${new Date().toLocaleDateString()}`);
+  if(!nombre) return;
+  const favs=obtenerFavoritos();
+  favs[nombre]={ocupaciones:leerOcupaciones(), asignaturas:leerAsignaturas(), guardadoEn:new Date().toISOString()};
   localStorage.setItem(STORAGE_KEY, JSON.stringify(favs));
   refrescarSelectorFavoritos();
   alert(`✅ Favorito "${nombre}" guardado.`);
 }
-function cargarFavorito() {
-  const nombre = document.getElementById('favoritos-select').value;
-  if (!nombre) { alert('Selecciona un favorito.'); return; }
-  const favs = obtenerFavoritos();
-  const fav = favs[nombre];
-  if (!fav) return;
-  document.getElementById('ocupaciones-container').innerHTML = '';
-  document.getElementById('ramos-container').innerHTML = '';
-  fav.ocupaciones.forEach(o => agregarOcupacion(o));
-  fav.asignaturas.forEach(r => agregarRamo(r));
-  document.getElementById('import-feedback').innerHTML =
-    `<div class="success-box">✅ Favorito "${nombre}" cargado.</div>`;
+function cargarFavorito(){
+  const nombre=document.getElementById('favoritos-select').value;
+  if(!nombre){alert('Selecciona un favorito.'); return;}
+  const fav=obtenerFavoritos()[nombre]; if(!fav) return;
+  document.getElementById('ocupaciones-container').innerHTML='';
+  document.getElementById('ramos-container').innerHTML='';
+  fav.ocupaciones.forEach(o=>agregarOcupacion(o));
+  fav.asignaturas.forEach(r=>agregarRamo(r));
+  document.getElementById('import-feedback').innerHTML=`<div class="success-box">✅ Favorito "${nombre}" cargado.</div>`;
 }
-function eliminarFavorito() {
-  const nombre = document.getElementById('favoritos-select').value;
-  if (!nombre) { alert('Selecciona un favorito.'); return; }
-  if (!confirm(`¿Eliminar "${nombre}"?`)) return;
-  const favs = obtenerFavoritos();
-  delete favs[nombre];
+function eliminarFavorito(){
+  const nombre=document.getElementById('favoritos-select').value;
+  if(!nombre){alert('Selecciona un favorito.'); return;}
+  if(!confirm(`¿Eliminar "${nombre}"?`)) return;
+  const favs=obtenerFavoritos(); delete favs[nombre];
   localStorage.setItem(STORAGE_KEY, JSON.stringify(favs));
   refrescarSelectorFavoritos();
 }
 
-/* ============================================================================
-   EXPORTAR (PDF / JSON)
-   ========================================================================= */
-function exportarPDF(idxOpcion) {
-  if (!RESULTADO_ACTUAL) return;
-  const op = RESULTADO_ACTUAL.opciones[idxOpcion];
-  const { jsPDF } = window.jspdf;
-  const doc = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
-
-  doc.setFontSize(16);
-  doc.setTextColor(67, 56, 202);
-  doc.text('StudyBalance — Rutina de Estudio', 14, 18);
-  doc.setFontSize(10);
-  doc.setTextColor(60, 60, 60);
-  doc.text(op.estrategia, 14, 25);
+/* ====== EXPORTAR ====== */
+function exportarPDF(idxOpcion){
+  if(!RESULTADO_ACTUAL) return;
+  const op=RESULTADO_ACTUAL.opciones[idxOpcion];
+  const {jsPDF}=window.jspdf;
+  const doc=new jsPDF({orientation:'portrait', unit:'mm', format:'a4'});
+  doc.setFontSize(16); doc.setTextColor(67,56,202); doc.text('StudyBalance — Rutina de Estudio', 14, 18);
+  doc.setFontSize(10); doc.setTextColor(60,60,60); doc.text(op.estrategia, 14, 25);
   doc.setFontSize(9);
-  const lineas = doc.splitTextToSize(op.descripcion, 180);
+  const lineas=doc.splitTextToSize(op.descripcion, 180);
   doc.text(lineas, 14, 31);
-  doc.text(`Total semanal: ${op.resumen.horasEstudioTotales}h de estudio`, 14, 31 + lineas.length * 4 + 4);
-
-  let cursorY = 31 + lineas.length * 4 + 12;
-
-  DIAS_SEMANA.forEach(dia => {
-    const evs = op.dias[dia] || [];
-    if (!evs.length) return;
-    const rows = evs.map(ev => [ev.bloqueHorario, ev.actividad, ev.detalle]);
+  doc.text(`Total semanal: ${op.resumen.horasEstudioTotales}h de estudio`, 14, 31+lineas.length*4+4);
+  let cursorY=31+lineas.length*4+12;
+  DIAS_SEMANA.forEach(dia=>{
+    const evs=op.dias[dia]||[]; if(!evs.length) return;
+    const rows=evs.map(ev=>[ev.bloqueHorario, ev.actividad, ev.detalle]);
     doc.autoTable({
-      startY: cursorY,
-      head: [[`${dia}`, 'Actividad', 'Detalle']],
-      body: rows,
-      theme: 'striped',
-      headStyles: { fillColor: [67, 56, 202], textColor: 255, fontSize: 9 },
-      bodyStyles: { fontSize: 8 },
-      columnStyles: { 0: { cellWidth: 35 }, 1: { cellWidth: 70 } },
-      margin: { left: 14, right: 14 },
+      startY:cursorY, head:[[`${dia}`,'Actividad','Detalle']], body:rows, theme:'striped',
+      headStyles:{fillColor:[67,56,202], textColor:255, fontSize:9},
+      bodyStyles:{fontSize:8},
+      columnStyles:{0:{cellWidth:35}, 1:{cellWidth:70}},
+      margin:{left:14, right:14},
     });
-    cursorY = doc.lastAutoTable.finalY + 5;
-    if (cursorY > 260) { doc.addPage(); cursorY = 20; }
+    cursorY=doc.lastAutoTable.finalY+5;
+    if(cursorY>260){doc.addPage(); cursorY=20;}
   });
-
-  if (op.metodosSugeridos && op.metodosSugeridos.length) {
-    if (cursorY > 230) { doc.addPage(); cursorY = 20; }
-    doc.setFontSize(12);
-    doc.setTextColor(67, 56, 202);
-    doc.text('Métodos de estudio recomendados', 14, cursorY);
-    cursorY += 6;
-    op.metodosSugeridos.forEach(m => {
-      doc.setFontSize(10);
-      doc.setTextColor(30, 30, 30);
-      doc.text(`${m.icono} ${m.nombre} (${Math.round(m.score*100)}% match)`, 14, cursorY);
-      cursorY += 5;
-      doc.setFontSize(8);
-      doc.setTextColor(80, 80, 80);
-      const r = doc.splitTextToSize(`Por qué: ${m.razon}`, 180);
-      doc.text(r, 14, cursorY); cursorY += r.length * 3.5 + 2;
-      m.tips.forEach(t => {
-        const tt = doc.splitTextToSize(`• ${t}`, 175);
-        doc.text(tt, 18, cursorY); cursorY += tt.length * 3.5;
+  if(op.metodosSugeridos && op.metodosSugeridos.length){
+    if(cursorY>230){doc.addPage(); cursorY=20;}
+    doc.setFontSize(12); doc.setTextColor(67,56,202);
+    doc.text('Métodos de estudio recomendados', 14, cursorY); cursorY+=6;
+    op.metodosSugeridos.forEach(m=>{
+      doc.setFontSize(10); doc.setTextColor(30,30,30);
+      doc.text(`${m.icono} ${m.nombre} (${Math.round(m.score*100)}% match)`, 14, cursorY); cursorY+=5;
+      doc.setFontSize(8); doc.setTextColor(80,80,80);
+      const r=doc.splitTextToSize(`Por qué: ${m.razon}`, 180);
+      doc.text(r, 14, cursorY); cursorY+=r.length*3.5+2;
+      m.tips.forEach(t=>{
+        const tt=doc.splitTextToSize(`• ${t}`, 175);
+        doc.text(tt, 18, cursorY); cursorY+=tt.length*3.5;
       });
-      cursorY += 3;
-      if (cursorY > 270) { doc.addPage(); cursorY = 20; }
+      cursorY+=3;
+      if(cursorY>270){doc.addPage(); cursorY=20;}
     });
   }
-
-  doc.setFontSize(7);
-  doc.setTextColor(120, 120, 120);
+  doc.setFontSize(7); doc.setTextColor(120,120,120);
   doc.text(`Generado por StudyBalance v3.1 — ${new Date().toLocaleString()}`, 14, 290);
   doc.save(`StudyBalance_${op.estrategia.split(':')[0].replace(/\s+/g,'_')}.pdf`);
 }
-
-function exportarJSON(idxOpcion) {
-  if (!RESULTADO_ACTUAL) return;
-  const op = RESULTADO_ACTUAL.opciones[idxOpcion];
-  const data = JSON.stringify({ metadata: RESULTADO_ACTUAL.metadata, opcion: op }, null, 2);
-  const blob = new Blob([data], { type: 'application/json' });
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement('a');
-  a.href = url;
-  a.download = `StudyBalance_${op.estrategia.split(':')[0].replace(/\s+/g,'_')}.json`;
-  a.click();
-  URL.revokeObjectURL(url);
+function exportarJSON(idxOpcion){
+  if(!RESULTADO_ACTUAL) return;
+  const op=RESULTADO_ACTUAL.opciones[idxOpcion];
+  const data=JSON.stringify({metadata:RESULTADO_ACTUAL.metadata, opcion:op}, null, 2);
+  const blob=new Blob([data], {type:'application/json'});
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement('a'); a.href=url;
+  a.download=`StudyBalance_${op.estrategia.split(':')[0].replace(/\s+/g,'_')}.json`;
+  a.click(); URL.revokeObjectURL(url);
 }
 
-/* ============================================================================
-   ORQUESTACIÓN
-   ========================================================================= */
-let RESULTADO_ACTUAL = null;
-let VISTAS_POR_OPCION = {};
+/* ====== ORQUESTACIÓN ====== */
+let RESULTADO_ACTUAL=null;
+let VISTAS_POR_OPCION={};
 
-function ejecutarMotor() {
-  const errCont = document.getElementById('error-container');
-  const res = document.getElementById('resultados');
-  errCont.innerHTML = ''; res.classList.add('hidden');
-  try {
-    RESULTADO_ACTUAL = generarRutinasDeEstudio({
-      ocupaciones: leerOcupaciones(),
-      asignaturas: leerAsignaturas(),
-    });
-  } catch (e) {
-    errCont.innerHTML = `<div class="error-box">⚠️ ${e.message}</div>`;
+function ejecutarMotor(){
+  const errCont=document.getElementById('error-container');
+  const res=document.getElementById('resultados');
+  errCont.innerHTML=''; res.classList.add('hidden');
+  try{
+    RESULTADO_ACTUAL=generarRutinasDeEstudio({ocupaciones:leerOcupaciones(), asignaturas:leerAsignaturas()});
+  } catch(e){
+    errCont.innerHTML=`<div class="error-box">⚠️ ${e.message}</div>`;
     return;
   }
-  VISTAS_POR_OPCION = {};
-  RESULTADO_ACTUAL.opciones.forEach((_, i) => VISTAS_POR_OPCION[i] = 'grid');
+  VISTAS_POR_OPCION={};
+  RESULTADO_ACTUAL.opciones.forEach((_,i)=>VISTAS_POR_OPCION[i]='grid');
   pintarResultados(RESULTADO_ACTUAL);
 }
 
-function pintarResultados(resultado) {
-  const tabsCont = document.getElementById('tabs-container');
-  const contenido = document.getElementById('contenido-opciones');
-
-  tabsCont.innerHTML = resultado.opciones.map((op, i) =>
-    `<button class="tab-btn ${i===0?'active':''}" onclick="cambiarTab(${i})" type="button">
-      ${op.estrategia.split(':')[0]}
-    </button>`
+function pintarResultados(resultado){
+  const tabsCont=document.getElementById('tabs-container');
+  const contenido=document.getElementById('contenido-opciones');
+  tabsCont.innerHTML=resultado.opciones.map((op,i)=>
+    `<button class="tab-btn ${i===0?'active':''}" onclick="cambiarTab(${i})" type="button">${op.estrategia.split(':')[0]}</button>`
   ).join('');
 
-  contenido.innerHTML = resultado.opciones.map((op, i) => `
-    <div class="tab-pane ${i===0?'':'hidden'}" id="pane-${i}">
+  contenido.innerHTML=resultado.opciones.map((op,i)=>{
+    const numSesiones=Object.values(op.dias).flat().filter(e=>e.tipo==='estudio').length;
+    return `<div class="tab-pane ${i===0?'':'hidden'}" id="pane-${i}">
       <div class="card">
         <p class="descripcion"><strong>${op.estrategia}</strong><br>${op.descripcion}</p>
         <span class="resumen-pill">Total semanal: ${op.resumen.horasEstudioTotales}h</span>
-        <span class="resumen-pill">${Object.values(op.dias).flat().filter(e=>e.tipo==='estudio').length} sesiones</span>
-        ${op.resumenPendientes.length ? `<p class="pendiente-warning">⚠️ Tiempo no asignado: ${op.resumenPendientes.map(p => `${p.nombre} (${p.minutosNoAsignados} min)`).join(', ')}</p>` : ''}
-
+        <span class="resumen-pill">${numSesiones} sesiones</span>
+        ${op.resumenPendientes.length?`<p class="pendiente-warning">⚠️ Tiempo no asignado: ${op.resumenPendientes.map(p=>`${p.nombre} (${p.minutosNoAsignados} min)`).join(', ')}</p>`:''}
         <div class="toolbar-row">
           <div class="view-toggle" role="tablist">
             <button class="${VISTAS_POR_OPCION[i]==='grid'?'active':''}" onclick="cambiarVista(${i},'grid')" type="button">🧱 Grid</button>
@@ -1296,7 +929,56 @@ function pintarResultados(resultado) {
           <button class="btn btn-secondary btn-sm" onclick="exportarJSON(${i})" type="button">💾 Exportar JSON</button>
           <button class="btn btn-secondary btn-sm" onclick="guardarFavorito()" type="button">⭐ Guardar como favorito</button>
         </div>
+        ${VISTAS_POR_OPCION[i]==='grid'?`<div class="drag-hint">🖱️ <strong>Tip:</strong> arrastra cualquier bloque de estudio, pausa o autocuidado a otro día/hora. Las clases fijas no son movibles.</div>`:''}
+        ${renderLeyenda()}
+        <div id="vista-${i}" class="${VISTAS_POR_OPCION[i]==='lista'?'lista-vista':''}"></div>
+      </div>
+      ${renderMetodos(op.metodosSugeridos)}
+    </div>`;
+  }).join('') + renderTipsUniversales();
 
-        ${VISTAS_POR_OPCION[i]==='grid' ? `<div class="drag-hint">🖱️ <strong>Tip:</strong> arrastra cualquier bloque de estudio/pausa/autocuidado a otro día u hora. Las clases fijas no son movibles.</div>` : ''}
+  // Insertar vistas (grid como DOM, lista como HTML)
+  resultado.opciones.forEach((op,i)=>{
+    const cont=document.getElementById(`vista-${i}`);
+    if(!cont) return;
+    cont.innerHTML='';
+    if(VISTAS_POR_OPCION[i]==='grid'){
+      cont.appendChild(renderGrid(op, i));
+      configurarDragDrop(cont);
+    } else {
+      cont.innerHTML=DIAS_SEMANA.map(d=>renderListaDia(d, op.dias[d])).join('');
+    }
+  });
 
-        ${renderL
+  document.getElementById('resultados').classList.remove('hidden');
+}
+
+function cambiarTab(idx){
+  document.querySelectorAll('.tab-btn').forEach((b,i)=>b.classList.toggle('active', i===idx));
+  document.querySelectorAll('.tab-pane').forEach((p,i)=>p.classList.toggle('hidden', i!==idx));
+}
+function cambiarVista(idx, modo){
+  VISTAS_POR_OPCION[idx]=modo;
+  pintarResultados(RESULTADO_ACTUAL);
+  cambiarTab(idx);
+}
+
+/* ====== PRECARGA DE EJEMPLO ====== */
+window.addEventListener('DOMContentLoaded', ()=>{
+  agregarOcupacion({dia:'Lunes', inicio:'08:30', fin:'10:00', etiqueta:'Cálculo I'});
+  agregarOcupacion({dia:'Lunes', inicio:'13:00', fin:'14:00', etiqueta:'Almuerzo'});
+  agregarOcupacion({dia:'Martes', inicio:'09:00', fin:'11:00', etiqueta:'Programación'});
+  agregarOcupacion({dia:'Miércoles', inicio:'08:30', fin:'10:00', etiqueta:'Cálculo I'});
+  agregarOcupacion({dia:'Jueves', inicio:'11:00', fin:'13:00', etiqueta:'Física I'});
+  agregarOcupacion({dia:'Viernes', inicio:'08:30', fin:'10:00', etiqueta:'Estadística'});
+
+  agregarRamo({nombre:'Cálculo I', dificultad:5});
+  agregarRamo({nombre:'Física I', dificultad:4});
+  agregarRamo({nombre:'Programación', dificultad:2});
+  agregarRamo({nombre:'Estadística', dificultad:3});
+
+  refrescarSelectorFavoritos();
+});
+</script>
+</body>
+</html>
